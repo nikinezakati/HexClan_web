@@ -37,8 +37,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'HexClan_web.hex_clan',
+    'User',
+    'Page',
+    'Lyrics',
 ]
+AUTH_USER_MODEL = 'User.user'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

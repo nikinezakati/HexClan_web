@@ -1,0 +1,18 @@
+{% extends 'members/main.html' %}
+
+{% block content %}
+	{% csrf_token %}
+	<h1>Dashboard</h1>
+	<hr>
+	{{member.username}}
+	<hr>
+	{{member.first_name}}
+	{{member.last_name}}
+	<hr>
+	{{member.email}}
+	<hr>
+	<form action="" method="POST">
+		{% csrf_token %}
+		<td><a href="{% url 'logout' %}">Log out</a></td>	
+	</form>
+{% endblock %}

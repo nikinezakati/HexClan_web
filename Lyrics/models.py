@@ -9,12 +9,12 @@ class lyrics(models.Model):
 class Liked_Section(models.Model):
     start_index = models.IntegerField()
     end_index = models.IntegerField()
-    likes = models.OneToOneField(user,on_delete=models.CASCADE,null= True)
+    likes = models.ManyToManyField(user)
     lyric = models.ForeignKey(lyrics,on_delete=models.CASCADE,null=True)
 
 class Commented_Section(models.Model):
     start_index = models.IntegerField()
     end_index = models.IntegerField()
     context = models.CharField(max_length=255,default='')
-    user = models.OneToOneField(user,on_delete=models.CASCADE,null= True)
+    user = models.ManyToManyField(user)
     lyric = models.ForeignKey(lyrics,on_delete=models.CASCADE,null=True)

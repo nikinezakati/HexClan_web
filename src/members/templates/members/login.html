@@ -1,0 +1,16 @@
+{% extends 'members/main.html' %}
+
+{% block content %}
+	<h1>Log in</h1>
+	<hr>
+	<form action="" method="POST">
+		{% csrf_token %}
+		<input type="text" placeholder="username" name="username">	
+		<input type="text" placeholder="password" name="password">	
+		<input type="submit" name="Log in">	
+	</form>
+	{% for message in messages %}
+		<p id="messages">{{message}}</p>
+	{% endfor %}
+{% endblock %}
+	

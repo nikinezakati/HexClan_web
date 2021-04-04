@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'User',
     'Page',
     'Lyrics',
+    'members',
 ]
 AUTH_USER_MODEL = 'User.user'
 

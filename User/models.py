@@ -10,6 +10,7 @@ class user(AbstractUser):
     favorites_musics  = models.ManyToManyField(Music,related_name='user_favoritemusic', null = True, blank = True)
     favorites_albums  = models.ManyToManyField(Album, null = True, blank = True)
     favorites_artists = models.ManyToManyField(Artist, null = True, blank = True)
+    REQUIRED_FIELDS = ['email', 'first_name', 'last_name',]
 
     def __str__(self):
         return self.username

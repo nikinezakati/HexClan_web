@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'drf_yasg',
     'corsheaders',
+    'drf_multiple_model',
     'User',
     'Page',
     'Lyrics',

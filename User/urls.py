@@ -1,11 +1,9 @@
 from django.urls import path
 from . import views
+from User.views import UpdateProfileView
+from django.conf.urls import url
 
 
 urlpatterns = [
-
-    path('', views.Home, name = "home"),
-    path('user-list/', views.userList, name = "user-list"),
-    path('user-login/', views.userLogin, name = "user-login"),
-    path('user-signup/', views.userSignup, name = "user-signup"),
+    path('update_profile/', UpdateProfileView.as_view(), name='auth_update_profile'),
 ]

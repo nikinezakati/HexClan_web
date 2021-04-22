@@ -39,7 +39,7 @@ def search_artist_by_name(query):
             re['life-span'] = q['life-span']
         else:
             break
-        artists[query].append(re)
+        artists[0].append(re)
 
     return artists
 
@@ -101,14 +101,14 @@ def search_recording_by_name(query):
                     if 'type' in release['release-group'] and release['release-group']['type'] == 'Album':
                         if 'id' in release['release-group']:
                             temp2['id'] = release['release-group']['id']
+                            # cover = musicbrainzngs.get_release_group_image_list(
+                            #     release['release-group']['id'])
+                            # if 'images' in cover and 'image' in cover['images'][0]:     
+                            #     temp2['cover_image'] = cover['images'][0]['image']
+                            # else:
+                            #     break   
                         else:
-                            break
-                            cover = musicbrainzngs.get_release_group_image_list(
-                                release['release-group']['id'])
-                            if 'images' in cover and 'image' in cover['images'][0]:     
-                                temp2['cover_image'] = cover['images'][0]['image']
-                            else:
-                                break    
+                            break      
                         if 'title' in release['release-group']:
                             temp2['title'] = release['release-group']['title']
                         else:
@@ -121,7 +121,7 @@ def search_recording_by_name(query):
         else:
             break
 
-        recordings[query].append(re)
+        recordings[0].append(re)
 
     return recordings
 
@@ -139,15 +139,16 @@ def search_album_by_name(query):
         if 'type' in q and q['type'] == 'Album':
             if 'id' in q:
                 re['id'] = q['id']
-            else:
-                break
+            
                 cover = musicbrainzngs.get_release_group_image_list(q['id'])
                 if 'images' in cover and 'image' in cover['images'][0]:
                     re['cover_image'] = cover['images'][0]['image']
                 else:
-                    break  
-            if 'name' in q:
-                re['name'] = q['name']
+                    break 
+            else:
+                break     
+            if 'title' in q:
+                re['title'] = q['title']
             else:
                 break
             if 'ext:score' in q:
@@ -161,8 +162,6 @@ def search_album_by_name(query):
                 re['first-release-date'] = q['first-release-date']
             else:
                 break
-        else:
-            break
 
             # artist
             if 'artist-credit' in q:
@@ -182,6 +181,7 @@ def search_album_by_name(query):
                         break
             else:
                 break
-        albums[query].append(re)
+        albums[0].append(re)
 
     return albums
+

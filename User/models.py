@@ -11,7 +11,8 @@ class user(AbstractUser):
     favorites_albums  = models.ManyToManyField(Album, blank = True)
     favorites_artists = models.ManyToManyField(Artist, blank = True)
     REQUIRED_FIELDS = ['email', 'first_name', 'last_name',]
-    
+   
+
     def __str__(self):
         return self.username
 

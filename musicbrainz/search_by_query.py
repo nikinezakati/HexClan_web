@@ -39,7 +39,8 @@ def search_artist_by_name(query):
             re['life-span'] = q['life-span']
         else:
             break
-        artists[0].append(re)
+        if not len(re)==0:
+            artists[0].append(re)
 
     return artists
 
@@ -120,8 +121,8 @@ def search_recording_by_name(query):
                     break
         else:
             break
-
-        recordings[0].append(re)
+        if not len(re)==0:    
+            recordings[0].append(re)
 
     return recordings
 
@@ -181,7 +182,23 @@ def search_album_by_name(query):
                         break
             else:
                 break
-        albums[0].append(re)
+        if not len(re['artist'])==0:    
+            albums[0].append(re)
 
     return albums
+
+if __name__ == '__main__':
+#     # get first release
+#     # if len(sys.argv) > 1:
+#     #     artist, album = [sys.argv[1], sys.argv[2]]
+#     #     get_tracklist(artist, album)
+#     # else:
+#     #     artist = input("Artist: ")
+#     #     album = input("Album: ")
+#     #     if not artist == "" and not album == "":
+#     #         get_tracklist(artist, album)
+#     #     else:
+#     #         print("Artist or Album missing")
+#     print(search_events())
+    print(search_artist_by_name("eminem"))    
 

@@ -141,11 +141,11 @@ def search_album_by_name(query):
             if 'id' in q:
                 re['id'] = q['id']
             
-                cover = musicbrainzngs.get_release_group_image_list(q['id'])
-                if 'images' in cover and 'image' in cover['images'][0]:
-                    re['cover_image'] = cover['images'][0]['image']
-                else:
-                    break 
+                # cover = musicbrainzngs.get_release_group_image_list(q['id'])
+                # if 'images' in cover and 'image' in cover['images'][0]:
+                #     re['cover_image'] = cover['images'][0]['image']
+                # else:
+                #     break 
             else:
                 break     
             if 'title' in q:
@@ -188,17 +188,15 @@ def search_album_by_name(query):
     return albums
 
 if __name__ == '__main__':
-#     # get first release
-#     # if len(sys.argv) > 1:
-#     #     artist, album = [sys.argv[1], sys.argv[2]]
-#     #     get_tracklist(artist, album)
-#     # else:
-#     #     artist = input("Artist: ")
-#     #     album = input("Album: ")
-#     #     if not artist == "" and not album == "":
-#     #         get_tracklist(artist, album)
-#     #     else:
-#     #         print("Artist or Album missing")
-#     print(search_events())
-    print(search_artist_by_name("eminem"))    
-
+    # get first release
+    # if len(sys.argv) > 1:
+    #     artist, album = [sys.argv[1], sys.argv[2]]
+    #     get_tracklist(artist, album)
+    # else:
+    #     artist = input("Artist: ")
+    #     album = input("Album: ")
+    #     if not artist == "" and not album == "":
+    #         get_tracklist(artist, album)
+    #     else:
+    #         print("Artist or Album missing")
+    print(search_album_by_name("e"))

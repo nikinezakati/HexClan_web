@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'Lyrics',
     'rest_framework',
     'djoser',
+    'musicbrainz',
 ]
 AUTH_USER_MODEL = 'User.user'
 
@@ -117,13 +118,14 @@ AUTH_PASSWORD_VALIDATORS = [
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
     'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication', 
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
     ),
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
-    ),
+    #'DEFAULT_PERMISSION_CLASSES': (
+     #   'rest_framework.permissions.IsAuthenticated',
+    #),
 }
 
 # Internationalization

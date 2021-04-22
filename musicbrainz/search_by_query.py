@@ -141,11 +141,11 @@ def search_album_by_name(query):
             if 'id' in q:
                 re['id'] = q['id']
             
-                cover = musicbrainzngs.get_release_group_image_list(q['id'])
-                if 'images' in cover and 'image' in cover['images'][0]:
-                    re['cover_image'] = cover['images'][0]['image']
-                else:
-                    break 
+                # cover = musicbrainzngs.get_release_group_image_list(q['id'])
+                # if 'images' in cover and 'image' in cover['images'][0]:
+                #     re['cover_image'] = cover['images'][0]['image']
+                # else:
+                #     break 
             else:
                 break     
             if 'title' in q:
@@ -186,5 +186,3 @@ def search_album_by_name(query):
             albums[0].append(re)
 
     return albums
-
-

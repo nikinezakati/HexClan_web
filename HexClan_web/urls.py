@@ -18,21 +18,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path , include
 from django.conf.urls import url
-
-<<<<<<< HEAD
- 
-
-=======
->>>>>>> 9714b8cf6127e11216882da5cb200b53b27c2126
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
-<<<<<<< HEAD
- 
 
-=======
->>>>>>> 9714b8cf6127e11216882da5cb200b53b27c2126
 schema_view = get_schema_view(
    openapi.Info(
       title="Snippets API",
@@ -45,12 +35,6 @@ schema_view = get_schema_view(
    public=True,
    permission_classes=(permissions.AllowAny,),
 )
-<<<<<<< HEAD
-
- 
-=======
->>>>>>> 9714b8cf6127e11216882da5cb200b53b27c2126
-
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -60,9 +44,10 @@ urlpatterns = [
     url(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     url(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     url(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
-<<<<<<< HEAD
-]
-=======
+
+    #rest_framework
+    path('api/page/', include('Page.api.urls'), name = 'page-api'),
 ]
 
->>>>>>> 9714b8cf6127e11216882da5cb200b53b27c2126
+
+

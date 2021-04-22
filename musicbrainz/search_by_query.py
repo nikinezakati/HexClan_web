@@ -187,16 +187,3 @@ def search_album_by_name(query):
 
     return albums
 
-if __name__ == '__main__':
-    # get first release
-    # if len(sys.argv) > 1:
-    #     artist, album = [sys.argv[1], sys.argv[2]]
-    #     get_tracklist(artist, album)
-    # else:
-    #     artist = input("Artist: ")
-    #     album = input("Album: ")
-    #     if not artist == "" and not album == "":
-    #         get_tracklist(artist, album)
-    #     else:
-    #         print("Artist or Album missing")
-    print(search_album_by_name("e"))

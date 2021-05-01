@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
-
+import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -25,8 +25,8 @@ SECRET_KEY = '*3*ioe2)pff2r#h^@a&236!bsbt!b^qr9ome@i3vm)7ih2q1gq'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['*']
+CORS_ALLOW_ALL_ORIGINS = True
 
 # Application definition
 
@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_avatar.apps.RestAvatarConfig',
     'rest_framework.authtoken',
     'drf_yasg',
     'corsheaders',
@@ -45,6 +46,7 @@ INSTALLED_APPS = [
     'Lyrics',
     'rest_framework',
     'djoser',
+    'musicbrainz',
 ]
 AUTH_USER_MODEL = 'User.user'
 
@@ -52,6 +54,7 @@ AUTH_USER_MODEL = 'User.user'
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -88,8 +91,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME' : 'hexclan',
-        'USER' : 'niki',
-        'PASSWORD' : '1234',
+        'USER' : 'postgres',
+        'PASSWORD' : '123',
         'HOST' : 'localhost',
         'PORT' : '5432',
     }
@@ -114,8 +117,11 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
     'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication', 
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
@@ -124,7 +130,9 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ),
 }
-
+# Image upload configurations
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_URL = '/media/'
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 

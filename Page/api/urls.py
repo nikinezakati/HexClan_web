@@ -5,5 +5,6 @@ from django.conf.urls import url
 urlpatterns = [
 	url(r'^ArtistSearchAPIView/$', ArtistSearchAPIView, name='ArtistSearchAPIView'),
 	url(r'^MusicSearchAPIView/$', MusicSearchAPIView, name='MusicSearchAPIView'),
-	url(r'^AlbumSearchAPIView/$', AlbumSearchAPIView, name='AlbumSearchAPIView')
+	url(r'^AlbumSearchAPIView/$', AlbumSearchAPIView, name='AlbumSearchAPIView'),
+	url(r'^SuggestionSearchAPIView/$', SuggestionSearchAPIView, name='SuggestionSearchAPIView')
 ]

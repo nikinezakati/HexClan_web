@@ -11,15 +11,22 @@ class UpdateUserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(validators=[UniqueValidator(queryset=User.objects.all())])
     class Meta:
         model = User
-        fields = ('first_name', 'last_name',
-                  'email', 'avatar', 'description')
+        fields = ('first_name', 'last_name','email', 'avatar', 'description')
 
     def update(self, instance, validated_data):
         instance.first_name = validated_data['first_name']
         instance.last_name = validated_data['last_name']
         instance.email = validated_data['email']
-        # instance.avatar = validated_data['avatar']
+        instance.avatar = validated_data['avatar']
         instance.description = validated_data['description']
         instance.save()
 
         return instance
+
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name',
+                  'email', 'avatar', 'description')
+
+    

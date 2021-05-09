@@ -20,7 +20,7 @@ class UpdateProfileView(generics.UpdateAPIView):
 
 class ProfileAPI(APIView):
     def get(self, request, *args, **kwargs):
-        user = get_object_or_404(User)
+        user = request.user
         profile_serializer = ProfileSerializer(user)
         return Response(profile_serializer.data)    
 

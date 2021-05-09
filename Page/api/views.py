@@ -26,7 +26,7 @@ def MusicSearchAPIView(request):
 	limit = request.GET['limit']
 	page = request.GET['page']
 	offset = (int(limit)+1)*int(page)
-	results = search_recording_by_name(search, limit, str(offset))
+	results = search_recording_by_name(search, limit, str(offset),photo=true)
 	return Response(results, status=status.HTTP_201_CREATED)
 
 @api_view(['GET', 'POST'])
@@ -35,7 +35,7 @@ def AlbumSearchAPIView(request):
 	limit = request.GET['limit']
 	page = request.GET['page']
 	offset = (int(limit)+1)*int(page)
-	results = search_album_by_name(search, limit, str(offset))
+	results = search_album_by_name(search, limit, str(offset),photo=true)
 	return Response(results, status=status.HTTP_201_CREATED)
 
 @api_view(['GET', 'POST'])

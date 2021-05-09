@@ -55,7 +55,6 @@ class ArtistSerializer(serializers.Serializer):
             'end_date',
             'albums'
         )
-        data = search_artist_by_name("Eminem")
 
 class AlbumSerializer(serializers.Serializer):
     class Nodes: 

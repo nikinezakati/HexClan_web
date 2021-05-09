@@ -76,4 +76,26 @@ class album_favorite(models.Model):
 
 class artist_favorite(models.Model):
     user      = models.ManyToManyField(user)
-    artist_id = models.CharField(max_length=255,default='')        
+    artist_id = models.CharField(max_length=255,default='')     
+
+class top_music_rating(models.Model):
+    music_id = models.CharField(max_length=255,default='')
+    rating = models.FloatField(
+    validators=[MaxValueValidator(5), MinValueValidator(0)]
+    ,null=True
+    ) 
+    vote_num = models.IntegerField(default=0)
+class top_album_rating(models.Model):
+    album_id = models.CharField(max_length=255,default='')
+    rating = models.FloatField(
+    validators=[MaxValueValidator(5), MinValueValidator(0)]
+    ,null=True
+    ) 
+    vote_num = models.IntegerField(default=0)
+class top_artist_rating(models.Model):
+    artist_id = models.CharField(max_length=255,default='')
+    rating = models.FloatField(
+    validators=[MaxValueValidator(5), MinValueValidator(0)]
+    ,null=True
+    )
+    vote_num = models.IntegerField(default=0)       

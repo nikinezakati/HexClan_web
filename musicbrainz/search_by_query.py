@@ -201,9 +201,27 @@ def search_album_by_name(query,limit,offset,photo):
     return albums
 
 
-if __name__ == '__main__':
-    
-    #recording='63e4c621-56a2-4d3f-99d9-25af98d0bede'
-    #print(get_artist_by_id('f4abc0b5-3f7a-4eff-8f78-ac078dbce533'))
-    #print(get_album_by_id('a672261f-aa4a-43bd-9d83-2c031b1b77a4'))
-    print(search_artist_by_name("eminem",0,0))
+def top_artists(ID):
+    annotations = musicbrainzngs.get_artist_by_id(id = ID)
+    qu = annotations['artist']
+    artist = {}
+
+    if 'id' in qu:
+        artist['id'] = qu['id']
+    if 'name' in qu:
+        artist['name'] = qu['name']
+    if 'type' in qu:
+        artist['type'] = qu['type']
+    if 'rating' in qu:
+        artist['rating'] = qu['rating']['rating']
+    if 'life-span' in qu:
+        artist['life-span'] = qu['life-span']
+    return artist
+
+def top_musics(ID):
+    annotations = musicbrainzngs.get_recording_by_id(id = ID)
+    return annotations
+
+def top_albums(ID):
+    annotations = musicbrainzngs.get_release_group_by_id(id = ID)
+    return annotations

@@ -13,7 +13,7 @@ def search_artist_by_name(query,limit,offset):
     annotations = musicbrainzngs.search_artists(query,limit=limit,offset=offset)
     qu = annotations['artist-list']
     artists = {}
-    artists[0] = []
+    artists[results] = []
     for q in qu:
         re = {}
         if 'id' in q:
@@ -45,7 +45,7 @@ def search_artist_by_name(query,limit,offset):
             continue
 
         if not len(re) == 0:
-            artists[0].append(re)
+            artists[results].append(re)
 
     return artists
 
@@ -54,7 +54,7 @@ def search_recording_by_name(query,limit,offset,photo):
     annotations = musicbrainzngs.search_recordings(query,limit=limit,offset=offset)
     qu = annotations['recording-list']
     recordings = {}
-    recordings[0] = []
+    recordings[results] = []
     for q in qu:
         re = {}
         re['artist'] = []
@@ -132,7 +132,7 @@ def search_recording_by_name(query,limit,offset,photo):
             continue
 
         if not len(re) == 0:
-            recordings[0].append(re)
+            recordings[results].append(re)
 
     return recordings
 
@@ -141,7 +141,7 @@ def search_album_by_name(query,limit,offset,photo):
     annotations = musicbrainzngs.search_release_groups(query,limit=limit,offset=offset)
     qu = annotations['release-group-list']
     albums = {}
-    albums[0] = []
+    albums[results] = []
 
     for q in qu:
         re = {}
@@ -197,7 +197,7 @@ def search_album_by_name(query,limit,offset,photo):
             else:
                 continue
         if not len(re) == 0:
-            albums[0].append(re)
+            albums[results].append(re)
     return albums
 
 

@@ -92,10 +92,7 @@ class top_album_rating(models.Model):
     ,null=True
     ) 
     vote_num = models.IntegerField(default=0)
+    
 class top_artist_rating(models.Model):
     artist_id = models.CharField(max_length=255,default='')
-    rating = models.FloatField(
-    validators=[MaxValueValidator(5), MinValueValidator(0)]
-    ,null=True
-    )
     vote_num = models.IntegerField(default=0)       

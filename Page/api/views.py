@@ -97,18 +97,15 @@ def SuggestionSearchAPIView(request):
 
 	temp1 = search_artist_by_name(search,limit=3,offset=0)[0]
 	for t in temp1:
-		if 'name' in t:
-			d1['artists'].append(t['name'])
+		d1['artists'].append(t['name'])
 
 	temp2 = search_album_by_name(search,limit=3,offset=0,photo=False)[0]
 	for t in temp2:
-		if 'title' in t:
-			d2['albums'].append(t['title'])
+		d2['albums'].append(t['title'])
 
 	temp3 = search_recording_by_name(search,limit=3,offset=0,photo=False)[0]
 	for t in temp3:
-		if 'title' in t:
-			d3['tracks'].append(t['title'])
+		d3['tracks'].append(t['title'])
 
 	results=[]
 	results.append(d1)

@@ -50,7 +50,7 @@ def search_artist_by_name(query,limit,offset):
         else:
             continue
 
-        if len(re) != 0:
+        if len(re) > 1:
             artists['results'].append(re)
 
     return artists
@@ -133,7 +133,7 @@ def search_recording_by_name(query,limit,offset,photo):
         else:
             continue
 
-        if len(re) != 0:
+        if len(re) > 1:
             recordings['results'].append(re)
 
     return recordings
@@ -201,7 +201,7 @@ def search_album_by_name(query,limit,offset,photo):
                         continue
             else:
                 continue
-        if len(re) != 0:
+        if len(re) > 1:
             albums['results'].append(re)
     return albums
 
@@ -238,22 +238,3 @@ def top_musics(ID):
 def top_albums(ID):
     annotations = musicbrainzngs.get_release_group_by_id(id = ID)
     return annotations
-
-
-# if __name__ == '__main__':
-#     # get first release
-#     # if len(sys.argv) > 1:
-#     #     artist, album = [sys.argv[1], sys.argv[2]]
-#     #     get_tracklist(artist, album)
-#     # else:
-#     #     artist = input("Artist: ")
-#     #     album = input("Album: ")
-#     #     if not artist == "" and not album == "":
-#     #         get_tracklist(artist, album)
-#     #     else:
-#     #         print("Artist or Album missing")
-#     #recording='63e4c621-56a2-4d3f-99d9-25af98d0bede'
-#     #print(get_artist_by_id('f4abc0b5-3f7a-4eff-8f78-ac078dbce533'))
-#     #print(get_album_by_id('a672261f-aa4a-43bd-9d83-2c031b1b77a4'))
-#     #print(musicbrainzngs.get_release_group_image_list('a672261f-aa4a-43bd-9d83-2c031b1b77a4'))    
-#     print(search_artist_by_name("SIA",0,0))

@@ -25,8 +25,12 @@ def MusicSearchAPIView(request):
 	search = request.GET['search']
 	limit = request.GET['limit']
 	page = request.GET['page']
+	photo = request.GET['photo']
 	offset = (int(limit)+1)*int(page)
-	results = search_recording_by_name(search, limit, str(offset))
+	if photo == 'True' :
+		results = search_recording_by_name(search, limit, str(offset),photo=True)
+	if photo == 'False':
+		results = search_recording_by_name(search, limit, str(offset),photo=False)
 	return Response(results, status=status.HTTP_201_CREATED)
 
 @api_view(['GET', 'POST'])
@@ -34,13 +38,17 @@ def AlbumSearchAPIView(request):
 	search = request.GET['search']
 	limit = request.GET['limit']
 	page = request.GET['page']
+	photo = request.GET['photo']
 	offset = (int(limit)+1)*int(page)
-	results = search_album_by_name(search, limit, str(offset))
+	if photo == 'True' :
+		results = search_album_by_name(search, limit, str(offset),photo=True)
+	if photo == 'False':
+		results = search_album_by_name(search, limit, str(offset),photo=False)
 	return Response(results, status=status.HTTP_201_CREATED)
 
 @api_view(['GET', 'POST'])
 def TenTopArtistAPIView(request):
-	LIST = top_artist_rating.objects.all().order_by('rating').reverse()
+	LIST = top_artist_rating.objects.all().order_by('vote_num').reverse()
 	results=[]
 	i=0
 	for x in LIST:

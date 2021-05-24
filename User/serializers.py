@@ -29,4 +29,11 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = ('first_name', 'last_name',
                   'email', 'avatar', 'description')
 
+# class ProfileInfoSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = User
+#         fields = ('favorites_artists', 'favorites_albums',
+#                   'favorites_musics', 'album_ratings', 
+#                   'music_ratings')                  
+
     

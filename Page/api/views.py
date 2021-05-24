@@ -10,14 +10,19 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from itertools import chain
 from django.db.models import Q
 from User.models import *
+from musicbrainz.get_by_id import get_recording_by_id,get_album_by_id,get_artist_by_id
 
 @api_view(['GET', 'POST'])
 def ArtistSearchAPIView(request):
 	search = request.GET['search']
 	limit = request.GET['limit']
 	page = request.GET['page']
+	photo = request.GET['photo']
 	offset = (int(limit)+1)*int(page)
-	results = search_artist_by_name(search, limit, str(offset))
+	if photo == 'True' :
+		results = search_artist_by_name(search, limit, str(offset),photo=True)
+	if photo == 'False':	
+		results = search_artist_by_name(search, limit, str(offset),photo=False)
 	return Response(results, status=status.HTTP_201_CREATED)
 
 @api_view(['GET', 'POST'])
@@ -48,11 +53,11 @@ def AlbumSearchAPIView(request):
 
 @api_view(['GET', 'POST'])
 def TenTopArtistAPIView(request):
-	LIST = top_artist_rating.objects.all().order_by('vote_num').reverse()
+	LIST = total_artist_followings.objects.all().order_by('following_num').reverse()
 	results=[]
 	i=0
 	for x in LIST:
-		y = top_artists(x.artist_id)
+		y = get_artist_by_id(x.artist_id)
 		results.append(y)
 		i += 1
 		if i >= 10 or i >= len(LIST):
@@ -61,11 +66,11 @@ def TenTopArtistAPIView(request):
 
 @api_view(['GET', 'POST'])
 def TenTopMusicAPIView(request):
-	LIST = top_music_rating.objects.all().order_by('rating').reverse()
+	LIST = total_music_rating.objects.all().order_by('rating').reverse()
 	results=[]
 	i=0
 	for x in LIST:
-		y = top_musics(x.music_id)
+		y = get_recording_by_id(x.music_id)
 		results.append(y)
 		i += 1
 		if i >= 10 or i >= len(LIST):
@@ -74,11 +79,11 @@ def TenTopMusicAPIView(request):
 
 @api_view(['GET', 'POST'])
 def TenTopAlbumAPIView(request):
-	LIST = top_album_rating.objects.all().order_by('rating').reverse()
+	LIST = total_album_rating.objects.all().order_by('rating').reverse()
 	results=[]
 	i=0
 	for x in LIST:
-		y = top_albums(x.album_id)
+		y = get_album_by_id(x.album_id)
 		results.append(y)
 		i += 1
 		if i >= 10 or i >= len(LIST):
@@ -95,17 +100,17 @@ def SuggestionSearchAPIView(request):
 	d2['albums']=[]
 	d3['tracks']=[]
 
-	temp1 = search_artist_by_name(search,limit=3,offset=0)[0]
+	temp1 = search_artist_by_name(search,limit=3,offset=0,photo=False)['results']
 	for t in temp1:
 		if 'name' in t:
 			d1['artists'].append(t['name'])
 
-	temp2 = search_album_by_name(search,limit=3,offset=0,photo=False)[0]
+	temp2 = search_album_by_name(search,limit=3,offset=0,photo=False)['results']
 	for t in temp2:
 		if 'title' in t:
 			d2['albums'].append(t['title'])
 
-	temp3 = search_recording_by_name(search,limit=3,offset=0,photo=False)[0]
+	temp3 = search_recording_by_name(search,limit=3,offset=0,photo=False)['results']
 	for t in temp3:
 		if 'title' in t:
 			d3['tracks'].append(t['title'])

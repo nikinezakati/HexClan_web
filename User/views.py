@@ -13,6 +13,7 @@ class UpdateProfileView(generics.UpdateAPIView):
     queryset = User.objects.all()
     permission_classes = [IsAuthenticated,]
     serializer_class = UpdateUserSerializer
+
     def get_object(self, queryset=None):
         return self.request.user
 
@@ -20,6 +21,15 @@ class UpdateProfileView(generics.UpdateAPIView):
 class ProfileAPI(APIView):
     def get(self, request, *args, **kwargs):
         user = request.user
+        permission_classes = [IsAuthenticated,]
         profile_serializer = ProfileSerializer(user)
         return Response(profile_serializer.data)    
+
+# class ProfileInfoAPI(APIView):
+#     def get(self, request, *args, **kwargs):
+#         user = request.user
+#         permission_classes = [IsAuthenticated,]
+#         profile_serializer = ProfileInfoSerializer(user)
+#         return Response(profile_serializer.data)            
+
 

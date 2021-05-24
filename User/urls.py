@@ -6,5 +6,6 @@ from django.conf.urls import url
 
 urlpatterns = [
     path('update_profile/', UpdateProfileView.as_view(), name='auth_update_profile'),
-    path('update_profile/me/', ProfileAPI.as_view())
+    path('update_profile/me/', ProfileAPI.as_view()),
+    #path('profile_info/me/', ProfileInfoAPI.as_view())
 ]

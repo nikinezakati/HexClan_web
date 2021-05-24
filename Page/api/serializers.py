@@ -1,6 +1,8 @@
 from rest_framework import serializers
+
+from Page.models import page, Artist, Music, Album, URL
 from musicbrainz.search_by_query import *
-from User.models import *
+
 
 #class PageSerializer(serializers.ModelSerializer):
 #	class Meta:
@@ -30,10 +32,18 @@ from User.models import *
 #		model = URL
 #		fields = '__all__'
 
-class ArtistCommentSerializer(serializers.Serializer):
+class MusicSerializer(serializers.Serializer):
     class Nodes: 
-        model = artist_comment
-        fields = ('context',)
+        fields = (
+        	'name',
+        	'profile_type',
+            'artists',
+            'producer',
+            'music_album',
+            'genre',
+            'release_date',
+            'rating'
+        )
 
 class ArtistSerializer(serializers.Serializer):
     class Nodes: 

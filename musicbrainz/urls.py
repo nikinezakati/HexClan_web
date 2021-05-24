@@ -1,9 +1,12 @@
 from django.urls import path
 from django.conf.urls import url
-from .views import *
+from .views import test,ArtistAPIView
+from musicbrainz.views import ArtistFollowAPIView, gdb
+
 
 urlpatterns = [
-    # path('test/', test),
-    url(r'^genres/$',GenresAPIView.as_view()),
-	path('gdb/', gdb, name = 'gdb'),
+    path('test/', test),
+    path('gdb/', gdb, name = 'gdb'),
+    url(r'^ArtistAPIView/$', ArtistAPIView, name='ArtistAPIView'),
+    url(r'^ArtistFollowAPIView/$', ArtistFollowAPIView, name='ArtistFollowAPIView'),
 ]    

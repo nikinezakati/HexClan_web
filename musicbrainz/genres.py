@@ -27,6 +27,3 @@ def GenresDescriptionsAPIView(str1):
 	except:
 		result = ""
 		return result
-
-
-

@@ -67,7 +67,9 @@ def get_artist_by_id(id):
     #followings
     query=total_artist_followings.objects.all().filter(artist_id=id)
     if len(query) !=0:
-        artist['followings']=query.following_num
+        for l in query:
+            if l.artist_id==id:
+                artist['followings']=l.following_num
     else:
         artist['followings']=None
 
@@ -131,8 +133,9 @@ def get_album_by_id(id):
         # rating
         query= total_album_rating.objects.all().filter(album_id=id)
         if len(query) !=0:
-            if query.vote_num !=0:
-                album['rating']=query.rating/query.vote_num
+            for l in query:
+                if l.vote_num !=0:
+                    album['rating']=l.rating/l.vote_num
             else:
                 album['rating']=None
         else:
@@ -165,8 +168,9 @@ def get_recording_by_id(id):
     # rating
     query= total_music_rating.objects.all().filter(music_id=id)
     if len(query) !=0:
-        if query.vote_num !=0:
-            recording['rating']=query.rating/query.vote_num
+        for l in query:
+            if l.vote_num !=0:
+                recording['rating']=l.rating/l.vote_num
         else:
             recording['rating']=None
     else:

@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
+import datetime
+from django.utils import timezone
 
 class user(AbstractUser):
     description       = models.CharField(max_length=255, default='', null = True, blank = True)
@@ -14,17 +16,19 @@ class music_comment(models.Model):
     music_id = models.CharField(max_length=255,default='')
     user     = models.ForeignKey(user,on_delete=models.CASCADE,null=True)
     context  = models.CharField(max_length=255,default='')
+    date      = models.DateTimeField(blank=True, null=True ,default=timezone.now)
 
 class album_comment(models.Model):
     album_id = models.CharField(max_length=255,default='')
     user     = models.ForeignKey(user,on_delete=models.CASCADE,null=True)
     context  = models.CharField(max_length=255,default='')
+    date      = models.DateTimeField(blank=True, null=True ,default=timezone.now)
 
 class artist_comment(models.Model):
     artist_id = models.CharField(max_length=255,default='')
     user      = models.ForeignKey(user,on_delete=models.CASCADE,null=True)
     context   = models.CharField(max_length=255,default='')
-
+    date      = models.DateTimeField(blank=True, null=True ,default=timezone.now)
 
 
 class music_rating(models.Model):

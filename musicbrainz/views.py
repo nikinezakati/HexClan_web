@@ -15,8 +15,8 @@ def test(request):
 
 @api_view(['GET',])
 def gdb(request):
-	get_genres_mb()
-	return Response(status=status.HTTP_201_CREATED)    
+    get_genres_mb()
+    return Response(status=status.HTTP_201_CREATED)    
 
 @api_view(['GET'])
 def ArtistAPIView(request):
@@ -49,8 +49,7 @@ def ArtistFollowAPIView(request):
 
         query=artist_favorite.objects.all().filter(user=us,artist_id=artist_id)
         if len(query)==0:
-            ar=artist_favorite.objects.create(artist_id=artist_id)
-            ar.user.add(us)
+            ar=artist_favorite.objects.create(artist_id=artist_id,user=us)
             result['msg']='Succesful'
             
             q=total_artist_followings.objects.all().filter(artist_id=artist_id)
@@ -67,8 +66,4 @@ def ArtistFollowAPIView(request):
 
     return Response(result, status=status.HTTP_201_CREATED)            
 
-    
-
-
-    
     

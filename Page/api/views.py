@@ -168,6 +168,7 @@ def ArtistAllCommentAPI(request):
 		d1=[]
 		d1.append(LIST[i].user.username)
 		d1.append(LIST[i].context)
+		d1.append(LIST[i].date)
 		results['results'].append(d1)
 		i = i + 1
 	return Response(results, status=status.HTTP_201_CREATED)

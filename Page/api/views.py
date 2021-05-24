@@ -11,6 +11,7 @@ from itertools import chain
 from django.db.models import Q
 from User.models import *
 from musicbrainz.get_by_id import get_recording_by_id,get_album_by_id,get_artist_by_id
+from musicbrainz.models import genre
 
 @api_view(['GET', 'POST'])
 def ArtistSearchAPIView(request):
@@ -122,3 +123,52 @@ def SuggestionSearchAPIView(request):
 	results['results'].append(d3)
 
 	return Response(results, status=status.HTTP_201_CREATED)
+
+@api_view(['GET',])
+def GenreAPIView(request):
+	LIST = genre.objects.all().order_by('id')
+	limit = request.GET['limit']
+	page = request.GET['page']
+	i = int(limit) * int(page)
+	j = int(limit)
+	results={}
+	results['results']=[]
+	while(j > 0):
+		if(i >= len(LIST)):
+			break
+		d1=[]
+		d1.append(LIST[i].name)
+		d1.append(LIST[i].description)
+		results['results'].append(d1)
+		i = i + 1
+		j = j - 1
+	return Response(results, status=status.HTTP_201_CREATED)
+
+@api_view(['GET', 'POST'])
+def ArtistCommentAPI(request):
+	user = request.user
+	artistid = request.GET['artistid']
+	data = request.data
+	try:
+		text = data["comment"]
+		if len(text) != 0:
+			artist_comment.objects.create(artist_id=artistid.strip(),user=user, context=text)
+	except:
+		text = data
+	return Response(data, status=status.HTTP_201_CREATED)
+
+@api_view(['GET',])
+def ArtistAllCommentAPI(request):
+	artistid = request.GET['artistid']
+	LIST = artist_comment.objects.filter(artist_id=artistid)
+	results={}
+	results['results']=[]
+	i = 0
+	while(i < len(LIST)):
+		d1=[]
+		d1.append(LIST[i].user.username)
+		d1.append(LIST[i].context)
+		results['results'].append(d1)
+		i = i + 1
+	return Response(results, status=status.HTTP_201_CREATED)
+

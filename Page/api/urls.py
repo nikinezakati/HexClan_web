@@ -9,5 +9,9 @@ urlpatterns = [
 	url(r'^ArtistSearchAPIView/$', ArtistSearchAPIView, name='ArtistSearchAPIView'),
 	url(r'^MusicSearchAPIView/$', MusicSearchAPIView, name='MusicSearchAPIView'),
 	url(r'^AlbumSearchAPIView/$', AlbumSearchAPIView, name='AlbumSearchAPIView'),
-	url(r'^SuggestionSearchAPIView/$', SuggestionSearchAPIView, name='SuggestionSearchAPIView')
+	url(r'^SuggestionSearchAPIView/$', SuggestionSearchAPIView, name='SuggestionSearchAPIView'),
+	url(r'^ArtistCommentAPI/$', ArtistCommentAPI, name='ArtistCommentAPI'),
+	url(r'^ArtistAllCommentAPI/$', ArtistAllCommentAPI, name='ArtistAllCommentAPI'),
+	url(r'^GenreAPIView/$', GenreAPIView, name='GenreAPIView'),
+
 ]

@@ -1,5 +1,4 @@
 from .models import genre
-from .GenreSerializer import GenreSerializer
 from rest_framework import generics
 from .search_by_query import search_artist_by_name
 from rest_framework.decorators import api_view
@@ -7,15 +6,17 @@ from .ArtistSerializer import ArtistSerializer
 from rest_framework import status
 from rest_framework.response import Response
 from User.models import album_favorite, artist_favorite, total_artist_followings
+from musicbrainz.genres import get_genres_mb
 
 @api_view(['GET'])
 def test(request):
     search_artist_by_name('Billie Eilish',0,0,True)
     
 
-class GenresAPIView(generics.ListAPIView):
-    queryset = genre.objects.all()
-    serializer_class = GenreSerializer
+@api_view(['GET',])
+def gdb(request):
+	get_genres_mb()
+	return Response(status=status.HTTP_201_CREATED)    
 
 @api_view(['GET'])
 def ArtistAPIView(request):

@@ -1,6 +1,8 @@
 import musicbrainzngs
 import sys
-# from Page.models import *
+from User.models import total_album_rating, total_artist_followings, total_music_rating
+from musicbrainz.get_by_id import get_artist_by_id
+
 
 musicbrainzngs.set_useragent(
     "HexClan",
@@ -9,47 +11,64 @@ musicbrainzngs.set_useragent(
 )
 
 
-def search_artist_by_name(query):
-    annotations = musicbrainzngs.search_artists(query)
+def search_artist_by_name(query, limit, offset, photo):
+    annotations = musicbrainzngs.search_artists(
+        query, limit=limit, offset=offset)
     qu = annotations['artist-list']
     artists = {}
-    artists["results"] = []
+    artists['results'] = []
     for q in qu:
         re = {}
         if 'id' in q:
             re['id'] = q['id']
+            query = total_artist_followings.objects.filter(artist_id=q['id'])
+            if len(query) != 0:
+                for l in query:
+                    re['followings'] = l.following_num
+            else:
+                re['followings'] = None
         else:
-            break
+            continue
         if 'name' in q:
             re['name'] = q['name']
         else:
-            break
+            continue
         if 'type' in q:
             re['type'] = q['type']
         else:
-            break
-        if 'ext:score' in q:
-            if int(q['ext:score']) < 6:
-                re['score'] = q['ext:score']
-            else:
-                re['score'] = str(int(q['ext:score'])/20)
-        else:
-            break
+            continue
+
         if 'life-span' in q:
-            re['life-span'] = q['life-span']
+            if 'begin' in q['life-span']:
+                re['life-span'] = q['life-span']
+            else:
+                l = {}
+                l['begin'] = '-'
+                l['ended'] = q['life-span']['ended']
+                re['life-span'] = l
         else:
-            break
-        if not len(re)==0:
-            artists["results"].append(re)
+            re['life-span'] = "-"
+        if 'country' in q:
+            re['country'] = q['country']
+        else:
+            continue
+
+        if(photo):
+            re_p = get_artist_by_id(q['id'])
+            re['photo'] = re_p['photo']
+
+        if len(re) > 1:
+            artists['results'].append(re)
 
     return artists
 
 
-def search_recording_by_name(query):
-    annotations = musicbrainzngs.search_recordings(query)
+def search_recording_by_name(query, limit, offset, photo):
+    annotations = musicbrainzngs.search_recordings(
+        query, limit=limit, offset=offset)
     qu = annotations['recording-list']
     recordings = {}
-    recordings["results"] = []
+    recordings['results'] = []
     for q in qu:
         re = {}
         re['artist'] = []
@@ -58,19 +77,22 @@ def search_recording_by_name(query):
         # recording
         if 'id' in q:
             re['id'] = q['id']
+            query = total_music_rating.objects.filter(music_id=q['id'])
+            if len(query) != 0:
+                for l in query:
+                    if l.vote_num != 0:
+                        re['rating'] = l.rating/l.vote_num
+                    else:
+                        re['rating'] = None
+            else:
+                re['rating'] = None
         else:
-            break
+            continue
         if 'title' in q:
             re['title'] = q['title']
         else:
-            break
-        if 'ext:score' in q:
-            if int(q['ext:score']) < 6:
-                re['score'] = q['ext:score']
-            else:
-                re['score'] = str(int(q['ext:score'])/20)
-        else:
-            break
+            continue
+
         # artist
         if 'artist-credit' in q:
             for artist in q['artist-credit']:
@@ -79,59 +101,61 @@ def search_recording_by_name(query):
                     if 'id' in artist['artist']:
                         temp['id'] = artist['artist']['id']
                     else:
-                        break
+                        continue
                     if 'name' in artist['artist']:
                         temp['name'] = artist['artist']['name']
                     else:
-                        break
+                        continue
                     re['artist'].append(temp)
                 else:
-                    break
+                    continue
         else:
-            break
+            continue
 
         # album
         if 'release-list' in q:
             for release in q['release-list']:
-                if 'date' in release:
-                    re['date'] = release['date']
-                else:
-                    break
                 if 'release-group' in release:
                     temp2 = {}
                     if 'type' in release['release-group'] and release['release-group']['type'] == 'Album':
                         if 'id' in release['release-group']:
                             temp2['id'] = release['release-group']['id']
-                            # cover = musicbrainzngs.get_release_group_image_list(
-                            #     release['release-group']['id'])
-                            # if 'images' in cover and 'image' in cover['images'][0]:     
-                            #     temp2['cover_image'] = cover['images'][0]['image']
-                            # else:
-                            #     break   
+                            if photo:
+                                try:
+                                    cover = musicbrainzngs.get_release_group_image_list(
+                                        release['release-group']['id'])
+                                    if 'images' in cover and 'image' in cover['images'][0]:
+                                        temp2['cover_image'] = cover['images'][0]['image']
+                                    else:
+                                        continue
+                                except:
+                                    continue
                         else:
-                            break      
+                            continue
                         if 'title' in release['release-group']:
                             temp2['title'] = release['release-group']['title']
                         else:
-                            break
+                            continue
                         re['album'].append(temp2)
                     else:
-                        break
+                        continue
                 else:
-                    break
+                    continue
         else:
-            break
-        if not len(re)==0:    
-            recordings["results"].append(re)
+            continue
+
+        if len(re) > 1:
+            recordings['results'].append(re)
 
     return recordings
 
 
-def search_album_by_name(query):
-    annotations = musicbrainzngs.search_release_groups(query)
+def search_album_by_name(query, limit, offset, photo):
+    annotations = musicbrainzngs.search_release_groups(
+        query, limit=limit, offset=offset)
     qu = annotations['release-group-list']
     albums = {}
-    albums["results"] = []
+    albums['results'] = []
 
     for q in qu:
         re = {}
@@ -140,29 +164,40 @@ def search_album_by_name(query):
         if 'type' in q and q['type'] == 'Album':
             if 'id' in q:
                 re['id'] = q['id']
-            
-                # cover = musicbrainzngs.get_release_group_image_list(q['id'])
-                # if 'images' in cover and 'image' in cover['images'][0]:
-                #     re['cover_image'] = cover['images'][0]['image']
-                # else:
-                #     break 
+                query = total_album_rating.objects.filter(album_id=q['id'])
+                if len(query) != 0:
+                    for l in query:
+                        if l.vote_num != 0:
+                            re['rating'] = l.rating/l.vote_num
+                        else:
+                            re['rating'] = None
+                else:
+                    re['rating'] = None
+
+                if photo:
+                    try:
+                        cover = musicbrainzngs.get_release_group_image_list(
+                            q['id'])
+                        if 'images' in cover and 'image' in cover['images'][0]:
+                            re['cover_image'] = cover['images'][0]['image']
+                        else:
+                            continue
+                    except:
+                        continue
             else:
-                break     
+                continue
             if 'title' in q:
                 re['title'] = q['title']
             else:
-                break
-            if 'ext:score' in q:
-                if int(q['ext:score']) < 6:
-                    re['score'] = q['ext:score']
-                else:
-                    re['score'] = str(int(q['ext:score'])/20)
-            else:
-                break
+                continue
+
             if 'first-release-date' in q:
-                re['first-release-date'] = q['first-release-date']
+                if q['first-release-date'] != " ":
+                    re['first-release-date'] = q['first-release-date']
+                else:
+                    re['first-release-date'] = "-"
             else:
-                break
+                re['first-release-date'] = "-"
 
             # artist
             if 'artist-credit' in q:
@@ -172,31 +207,22 @@ def search_album_by_name(query):
                         if 'id' in artist['artist']:
                             temp['id'] = artist['artist']['id']
                         else:
-                            break
+                            continue
                         if 'name' in artist['artist']:
                             temp['name'] = artist['artist']['name']
                         else:
-                            break
+                            continue
                         re['artist'].append(temp)
                     else:
-                        break
+                        continue
             else:
-                break
-        if not len(re['artist'])==0:    
-            albums["results"].append(re)
-
+                continue
+        if len(re) > 1:
+            albums['results'].append(re)
     return albums
 
-if __name__ == '__main__':
-    # get first release
-    # if len(sys.argv) > 1:
-    #     artist, album = [sys.argv[1], sys.argv[2]]
-    #     get_tracklist(artist, album)
-    # else:
-    #     artist = input("Artist: ")
-    #     album = input("Album: ")
-    #     if not artist == "" and not album == "":
-    #         get_tracklist(artist, album)
-    #     else:
-    #         print("Artist or Album missing")
-    print(search_album_by_name("e"))
+# if __name__ == '__main__':
+#     # recording='63e4c621-56a2-4d3f-99d9-25af98d0bede'
+#     print(search_artist_by_name('Billie Eilish',0,0))
+#     #print(get_album_by_id('a672261f-aa4a-43bd-9d83-2c031b1b77a4'))
+#     #print(musicbrainzngs.get_image_list('61e374b6-1b37-481a-9c81-139317f1e59a'))

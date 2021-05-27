@@ -1,10 +1,9 @@
 from django.db import models
 from User.models import user
-from Page.models import Music
 
 
 class lyrics(models.Model):
-    music    = models.OneToOneField(Music,on_delete=models.CASCADE,null=True)
+    music_id =  models.CharField(max_length=255,default='')
     context  = models.TextField()
 
 class Liked_Section(models.Model):

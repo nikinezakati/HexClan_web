@@ -5,7 +5,7 @@ from rest_framework.decorators import api_view
 from .ArtistSerializer import ArtistSerializer
 from rest_framework import status
 from rest_framework.response import Response
-from User.models import album_favorite, artist_favorite, total_artist_followings
+from User.models import album_favorite, artist_comment, artist_favorite, total_artist_followings
 from musicbrainz.genres import get_genres_mb
 from rest_framework.permissions import IsAuthenticated
 from musicbrainz.get_by_id import *
@@ -68,6 +68,20 @@ def ArtistAPIView(request):
         i += 1
         if i >= int(limit) or i >= len(LIST):
             break
+
+    # comments
+    LIST = artist_comment.objects.filter(artist_id=artist_id)
+
+    result['comments'] = []
+    i = 0
+    while(i < len(LIST)):
+        d1 = {}
+        d1['username'] = LIST[i].user.username
+        d1['avatar'] = LIST[i].user.avatar.url
+        d1['context'] = LIST[i].context
+        d1['date'] = LIST[i].date
+        result['comments'].append(d1)
+        i = i + 1
 
     return Response(result, status=status.HTTP_201_CREATED)
 

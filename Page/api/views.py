@@ -93,36 +93,52 @@ def TenTopAlbumAPIView(request):
 
 @api_view(['GET', 'POST'])
 def SuggestionSearchAPIView(request):
-	search = request.GET['search']
-	d1={}
-	d2={}
-	d3={}
-	d1['artists']=[]
-	d2['albums']=[]
-	d3['tracks']=[]
+  search = request.GET['search']
+  results={}
+  results['results']=[]
+  d1={}
+  d1['name']="Artist"
 
-	temp1 = search_artist_by_name(search,limit=3,offset=0,photo=False)['results']
-	for t in temp1:
-		if 'name' in t:
-			d1['artists'].append(t['name'])
+  r1={}
+  r1['name']="Artists"
+  r1['results']=[]
+  temp1 = search_artist_by_name(search,limit=3,offset=0,photo=False)['results']
+  for t in temp1:
+    if 'name' in t:
+      d={}
+      d['title']=t['name']
+      r1['results'].append(d)
 
-	temp2 = search_album_by_name(search,limit=3,offset=0,photo=False)['results']
-	for t in temp2:
-		if 'title' in t:
-			d2['albums'].append(t['title'])
+  if len(r1['results']) > 0 :
+    results['results'].append(r1)
 
-	temp3 = search_recording_by_name(search,limit=3,offset=0,photo=False)['results']
-	for t in temp3:
-		if 'title' in t:
-			d3['tracks'].append(t['title'])
+  r2={}
+  r2['name']="Albums"
+  r2['results']=[]
+  temp2 = search_album_by_name(search,limit=3,offset=0,photo=False)['results']
+  for t in temp2:
+    if 'title' in t:
+      d={}
+      d['title']=t['title']
+      r2['results'].append(d)
 
-	results={}
-	results['results']=[]
-	results['results'].append(d1)
-	results['results'].append(d2)
-	results['results'].append(d3)
+  if len(r2['results']) > 0 :
+    results['results'].append(r2)
 
-	return Response(results, status=status.HTTP_201_CREATED)
+  r3={}
+  r3['name']="Tracks"
+  r3['results']=[]
+  temp3 = search_recording_by_name(search,limit=3,offset=0,photo=False)['results']
+  for t in temp3:
+    if 'title' in t:
+      d={}
+      d['title']=t['title']
+      r3['results'].append(d)
+
+  if len(r3['results']) > 0 :
+    results['results'].append(r3)
+
+  return Response(results, status=status.HTTP_201_CREATED)
 
 @api_view(['GET',])
 def GenreAPIView(request):
@@ -157,22 +173,22 @@ def ArtistCommentAPI(request):
 		text = data
 	return Response(data, status=status.HTTP_201_CREATED)
 
-@api_view(['GET',])
-def ArtistAllCommentAPI(request):
-	artistid = request.GET['artistid']
-	LIST = artist_comment.objects.filter(artist_id=artistid)
-	results={}
-	results['results']=[]
-	i = 0
-	while(i < len(LIST)):
-		d1={}
-		d1['username'] = LIST[i].user.username
-		d1['avatar'] = LIST[i].user.avatar.url
-		d1['context'] = LIST[i].context
-		d1['date'] = LIST[i].date
-		results['results'].append(d1)
-		i = i + 1
-	return Response(results, status=status.HTTP_201_CREATED)
+# @api_view(['GET',])
+# def ArtistAllCommentAPI(request):
+# 	artistid = request.GET['artistid']
+# 	LIST = artist_comment.objects.filter(artist_id=artistid)
+# 	results={}
+# 	results['results']=[]
+# 	i = 0
+# 	while(i < len(LIST)):
+# 		d1={}
+# 		d1['username'] = LIST[i].user.username
+# 		d1['avatar'] = LIST[i].user.avatar.url
+# 		d1['context'] = LIST[i].context
+# 		d1['date'] = LIST[i].date
+# 		results['results'].append(d1)
+# 		i = i + 1
+# 	return Response(results, status=status.HTTP_201_CREATED)
 
 # @api_view(['GET', 'POST'])
 # def ArtistMusicsAPIView(request):

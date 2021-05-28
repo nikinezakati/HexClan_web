@@ -4,7 +4,6 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 import datetime
 from django.utils import timezone
 
-
 class user(AbstractUser):
     description = models.CharField(
         max_length=255, default='', null=True, blank=True)

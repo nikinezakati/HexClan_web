@@ -11,13 +11,13 @@ class UpdateUserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(validators=[UniqueValidator(queryset=User.objects.all())])
     class Meta:
         model = User
-        fields = ('first_name', 'last_name','email', 'avatar', 'description')
+        fields = ('username', 'first_name', 'last_name','email', 'description')
 
     def update(self, instance, validated_data):
+        instance.username = validated_data['username']
         instance.first_name = validated_data['first_name']
         instance.last_name = validated_data['last_name']
         instance.email = validated_data['email']
-        instance.avatar = validated_data['avatar']
         instance.description = validated_data['description']
         instance.save()
 
@@ -26,14 +26,18 @@ class UpdateUserSerializer(serializers.ModelSerializer):
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('first_name', 'last_name',
+        fields = ('username', 'first_name', 'last_name',
                   'email', 'avatar', 'description')
 
-# class ProfileInfoSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = User
-#         fields = ('favorites_artists', 'favorites_albums',
-#                   'favorites_musics', 'album_ratings', 
-#                   'music_ratings')                  
+
+class UpdateAvatarUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('avatar',)
+    def update(self, instance, validated_data):
+        instance.avatar = validated_data['avatar']
+        instance.save()
+        return instance
+     
 
     

@@ -10,7 +10,7 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from itertools import chain
 from django.db.models import Q
 from User.models import *
-from musicbrainz.get_by_id import get_recording_by_id,get_album_by_id,get_artist_by_id
+from musicbrainz.get_by_id import *
 from musicbrainz.models import genre
 
 @api_view(['GET', 'POST'])
@@ -136,9 +136,9 @@ def GenreAPIView(request):
 	while(j > 0):
 		if(i >= len(LIST)):
 			break
-		d1=[]
-		d1.append(LIST[i].name)
-		d1.append(LIST[i].description)
+		d1={}
+		d1['name'] = LIST[i].name
+		d1['description'] = LIST[i].description
 		results['results'].append(d1)
 		i = i + 1
 		j = j - 1
@@ -165,10 +165,56 @@ def ArtistAllCommentAPI(request):
 	results['results']=[]
 	i = 0
 	while(i < len(LIST)):
-		d1=[]
-		d1.append(LIST[i].user.username)
-		d1.append(LIST[i].context)
+		d1={}
+		d1['username'] = LIST[i].user.username
+		d1['avatar'] = LIST[i].user.avatar.url
+		d1['context'] = LIST[i].context
+		d1['date'] = LIST[i].date
 		results['results'].append(d1)
 		i = i + 1
 	return Response(results, status=status.HTTP_201_CREATED)
+
+# @api_view(['GET', 'POST'])
+# def ArtistMusicsAPIView(request):
+# 	search = request.GET['artistid']
+# 	results = browse_artist_music_by_id(search)
+# 	return Response(results, status=status.HTTP_201_CREATED)
+
+# @api_view(['GET', 'POST'])
+# def ArtistAlbumsAPIView(request):
+# 	search = request.GET['artistid']
+# 	results = browse_artist_album_by_id(search)
+# 	return Response(results, status=status.HTTP_201_CREATED)
+
+# @api_view(['GET', 'POST'])
+# def ArtistTopMusicsAPIView(request):
+# 	search = request.GET['artistid']
+# 	limit = request.GET['limit']
+# 	LIST = total_music_rating.objects.filter(artist_id=search).order_by('rating').reverse()
+# 	results={}
+# 	results['results']=[]
+# 	i=0
+# 	for x in LIST:
+# 		y = get_recording_by_id(x.music_id)
+# 		results['results'].append(y)
+# 		i += 1
+# 		if i >= int(limit) or i >= len(LIST):
+# 			break
+# 	return Response(results, status=status.HTTP_201_CREATED)
+
+# @api_view(['GET', 'POST'])
+# def ArtistTopAlbumsAPIView(request):
+# 	search = request.GET['artistid']
+# 	limit = request.GET['limit']
+# 	LIST = total_album_rating.objects.filter(artist_id=search).order_by('rating').reverse()
+# 	results={}
+# 	results['results']=[]
+# 	i=0
+# 	for x in LIST:
+# 		y = get_album_by_id(x.album_id)
+# 		results['results'].append(y)
+# 		i += 1
+# 		if i >= int(limit) or i >= len(LIST):
+# 			break
+# 	return Response(results, status=status.HTTP_201_CREATED)
 

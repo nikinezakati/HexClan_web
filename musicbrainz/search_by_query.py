@@ -11,7 +11,7 @@ musicbrainzngs.set_useragent(
 )
 
 
-def search_artist_by_name(query, limit, offset,photo):
+def search_artist_by_name(query, limit, offset, photo):
     annotations = musicbrainzngs.search_artists(
         query, limit=limit, offset=offset)
     qu = annotations['artist-list']
@@ -23,7 +23,8 @@ def search_artist_by_name(query, limit, offset,photo):
             re['id'] = q['id']
             query = total_artist_followings.objects.filter(artist_id=q['id'])
             if len(query) != 0:
-                re['followings'] = query.following_num
+                for l in query:
+                    re['followings'] = l.following_num
             else:
                 re['followings'] = None
         else:
@@ -37,24 +38,30 @@ def search_artist_by_name(query, limit, offset,photo):
         else:
             continue
 
+        l={}
         if 'life-span' in q:
+            l['begin'] = '-'
+            l['end'] ='-'
+            l['span']='-'
             if 'begin' in q['life-span']:
-                re['life-span'] = q['life-span']
-            else:
-                l = {}
-                l['begin'] = '-'
-                l['ended'] = q['life-span']['ended']
-                re['life-span'] = l
-        else:
-            re['life-span'] = "-"
+                l['begin'] = q['life-span']['begin']
+                if 'ended' in q['life-span']:
+                    if q['life-span']['ended']=="false":
+                        l['span']=f"{q['life-span']['begin'][0:4]}-present"
+                    else:
+                        if 'end' in q['life-span']:
+                            l['end']=q['life-span']['end']
+                            l['span']=f"{q['life-span']['begin'][0:4]}-{q['life-span']['end'][0:4]}"
+            re['life_span']=l
+
         if 'country' in q:
             re['country'] = q['country']
         else:
             continue
-        
+
         if(photo):
-            re_p=get_artist_by_id(q['id'])
-            re['photo']=re_p['photo']
+            re_p = get_artist_by_id(q['id'])
+            re['photo'] = re_p['photo']
 
         if len(re) > 1:
             artists['results'].append(re)
@@ -78,10 +85,11 @@ def search_recording_by_name(query, limit, offset, photo):
             re['id'] = q['id']
             query = total_music_rating.objects.filter(music_id=q['id'])
             if len(query) != 0:
-                if query.vote_num != 0:
-                    re['rating'] = query.rating/query.vote_num
-                else:
-                    re['rating'] = None
+                for l in query:
+                    if l.vote_num != 0:
+                        re['rating'] = l.rating/l.vote_num
+                    else:
+                        re['rating'] = None
             else:
                 re['rating'] = None
         else:
@@ -164,10 +172,11 @@ def search_album_by_name(query, limit, offset, photo):
                 re['id'] = q['id']
                 query = total_album_rating.objects.filter(album_id=q['id'])
                 if len(query) != 0:
-                    if query.vote_num != 0:
-                        re['rating'] = query.rating/query.vote_num
-                    else:
-                        re['rating'] = None
+                    for l in query:
+                        if l.vote_num != 0:
+                            re['rating'] = l.rating/l.vote_num
+                        else:
+                            re['rating'] = None
                 else:
                     re['rating'] = None
 
@@ -223,4 +232,3 @@ def search_album_by_name(query, limit, offset, photo):
 #     print(search_artist_by_name('Billie Eilish',0,0))
 #     #print(get_album_by_id('a672261f-aa4a-43bd-9d83-2c031b1b77a4'))
 #     #print(musicbrainzngs.get_image_list('61e374b6-1b37-481a-9c81-139317f1e59a'))
-

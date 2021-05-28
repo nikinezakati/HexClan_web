@@ -25,6 +25,95 @@ musicbrainzngs.set_useragent(
 
 #         # print(f'{line["number"]}. {line["recording"]["id"]}')
 
+def get_artistname_by_id(id):
+    annotations = musicbrainzngs.get_artist_by_id(id, includes=['releases'])
+    qu = annotations['artist']
+    artist = {}
+    artist['photo'] = ''
+
+    if 'id' in qu:
+        artist['id'] = qu['id']
+    else:
+        return {}    
+    if 'name' in qu:
+        artist['name'] = qu['name']   
+    else:
+        return {}   
+
+    for release in qu['release-list']:
+        temp = {}
+        if len(artist['photo']) == 0:
+            try:
+                cover = musicbrainzngs.get_image_list(release['id'])
+                if 'images' in cover and 'image' in cover['images'][0]:
+                    artist['photo'] = cover['images'][0]['image']
+            except:
+                pass   
+        if len(artist['photo']) != 0:
+            break    
+
+    return artist    
+
+
+def get_albumname_by_id(id):
+    annotations = musicbrainzngs.get_release_group_by_id(id)
+
+    qu = annotations['release-group']
+    album = {}
+
+    if 'primary-type' in qu and qu['primary-type'] == 'Album':
+        if 'id' in qu:
+            album['id'] = qu['id']
+        else:
+            return {}
+        if 'title' in qu:
+            album['title'] = qu['title']
+        else:
+            return {}
+
+        try:
+            cover = musicbrainzngs.get_release_group_image_list(id)
+            if 'images' in cover and 'image' in cover['images'][0]:
+                album['cover_image'] = cover['images'][0]['image']
+            else:
+                return {}
+        except:
+            album['cover_image'] = ''    
+
+    return album     
+    
+def get_recordingname_by_id(id):
+    annotations = musicbrainzngs.get_recording_by_id(id,includes=['releases'])
+    qu = annotations['recording']
+
+    recording = {}
+
+    if 'id' in qu:
+        recording['id'] = qu['id']
+    else:
+        return {}
+
+    if 'title' in qu:
+        recording['title'] = qu['title']
+    else:
+        return {}   
+
+    if 'release-list' in qu:
+        for release in qu['release-list']:
+            temp = {}
+            if len(recording['photo']) == 0:
+                try:
+                    cover = musicbrainzngs.get_image_list(release['id'])
+                    if 'images' in cover and 'image' in cover['images'][0]:
+                        artist['photo'] = cover['images'][0]['image']
+                except:
+                    pass   
+            if len(recording['photo']) != 0:
+                break            
+
+    return recording        
+
+
 
 def get_artist_by_id(id):
     annotations = musicbrainzngs.get_artist_by_id(id, includes=['releases'])
@@ -40,16 +129,21 @@ def get_artist_by_id(id):
         artist['type'] = qu['type']
     if 'country' in qu:
         artist['country'] = qu['country']    
+    l={}
     if 'life-span' in qu:
+        l['begin'] = '-'
+        l['end'] ='-'
+        l['span']='-'
         if 'begin' in qu['life-span']:
-            artist['life-span'] = qu['life-span']
-        else:
-            l = {}
-            l['begin'] = '-'
-            l['ended'] = qu['life-span']['ended']
-            artist['life-span'] = l
-    else:
-        artist['life-span'] = "-"
+            l['begin'] = qu['life-span']['begin']
+            if 'ended' in qu['life-span']:
+                if qu['life-span']['ended']=="false":
+                    l['span']=f"{qu['life-span']['begin'][0:4]}-present"
+                else:
+                    if 'end' in qu['life-span']:
+                        l['end']=qu['life-span']['end']
+                        l['span']=f"{qu['life-span']['begin'][0:4]}-{qu['life-span']['end'][0:4]}"
+        artist['life_span']=l
 
     # releases
     for release in qu['release-list']:
@@ -74,6 +168,8 @@ def get_artist_by_id(id):
         artist['followings']=None
 
     return artist
+
+   
 
 
 def get_album_by_id(id):
@@ -214,8 +310,65 @@ def get_recording_by_id(id):
             else:
                 return {}
             recording['album'].append(temp)
+    if 'release-list' in qu:
+        for release in qu['release-list']:
+            temp = {}
+            if len(artist['photo']) == 0:
+                try:
+                    cover = musicbrainzngs.get_image_list(release['id'])
+                    if 'images' in cover and 'image' in cover['images'][0]:
+                        artist['photo'] = cover['images'][0]['image']
+                except:
+                    pass   
+            if len(artist['photo']) != 0:
+                break        
 
     return recording
+
+def browse_artist_music_by_id(id):
+    annotations = musicbrainzngs.browse_recordings(id)
+    result = {}
+    result['result']=[]
+    for qu in annotations['recording-list']:
+        temp={}
+        if 'id' in qu:
+            temp['id']=qu['id']
+        else:
+            continue    
+        if 'title' in qu:
+            temp['title']=qu['title']
+        else:
+            continue
+        if len(temp)>0 :
+                result['result'].append(temp)
+    return result['result']
+
+def browse_artist_album_by_id(id):
+    annotations = musicbrainzngs.browse_release_groups(id)
+    result = {}
+    result['result']=[]
+    for qu in annotations['release-group-list']:
+        temp={}
+        if 'id' in qu:
+            temp['id']=qu['id']
+        else:
+            continue    
+        if 'type' in qu:
+            temp['type']=qu['type']
+        else:
+            continue
+        if 'title' in qu:
+            temp['title']=qu['title']
+        else:
+            continue
+        if 'first-release-date' in qu:
+            temp['release_date']=qu['first-release-date']
+        else:
+            temp['release_date']='-'
+        if len(temp)>0 :
+                result['result'].append(temp)
+   
+    return result['result']
 
 
 # if __name__ == '__main__':

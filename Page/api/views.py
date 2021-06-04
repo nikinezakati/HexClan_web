@@ -12,6 +12,7 @@ from django.db.models import Q
 from User.models import *
 from musicbrainz.get_by_id import *
 from musicbrainz.models import genre
+from User.models import *
 
 @api_view(['GET', 'POST'])
 def ArtistSearchAPIView(request):
@@ -81,6 +82,7 @@ def TenTopMusicAPIView(request):
 @api_view(['GET', 'POST'])
 def TenTopAlbumAPIView(request):
 	LIST = total_album_rating.objects.all().order_by('rating').reverse()
+	print (len(LIST))
 	results=[]
 	i=0
 	for x in LIST:
@@ -173,6 +175,16 @@ def ArtistCommentAPI(request):
 		text = data
 	return Response(data, status=status.HTTP_201_CREATED)
 
+@api_view(['GET', 'POST'])
+def LatestUserCommentAPI(request):
+	username = request.GET['username']
+	LIST = user.objects.get(username=username)
+	results={}
+	results['results'] = []
+	d1 = {}
+	d1['user'] = LIST.username
+	results['results'].append(d1)
+	return Response(results, status=status.HTTP_201_CREATED)
 # @api_view(['GET',])
 # def ArtistAllCommentAPI(request):
 # 	artistid = request.GET['artistid']

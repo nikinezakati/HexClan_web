@@ -7,8 +7,8 @@ from django.utils import timezone
 class user(AbstractUser):
     description = models.CharField(
         max_length=255, default='', null=True, blank=True)
-    avatar = models.ImageField(upload_to='Images/', height_field=None,
-                               width_field=None, max_length=100, null=True, blank=True)
+    avatar = models.ImageField(upload_to='Images/', height_field=None, default='/Images/default.jpg',
+     width_field=None, max_length=100, null=True, blank=True)
     REQUIRED_FIELDS = ['email', 'first_name', 'last_name', ]
 
     def __str__(self):
@@ -90,21 +90,21 @@ class user(AbstractUser):
 class music_comment(models.Model):
     music_id = models.CharField(max_length=255, default='')
     user = models.ForeignKey(user, on_delete=models.CASCADE, null=True)
-    context = models.CharField(max_length=255, default='')
+    context = models.CharField(max_length=5000, default='')
     date      = models.DateTimeField(blank=True, null=True ,default=timezone.now)
 
 
 class album_comment(models.Model):
     album_id = models.CharField(max_length=255, default='')
     user = models.ForeignKey(user, on_delete=models.CASCADE, null=True)
-    context = models.CharField(max_length=255, default='')
+    context = models.CharField(max_length=5000, default='')
     date      = models.DateTimeField(blank=True, null=True ,default=timezone.now)
 
 
 class artist_comment(models.Model):
     artist_id = models.CharField(max_length=255, default='')
     user = models.ForeignKey(user, on_delete=models.CASCADE, null=True)
-    context = models.CharField(max_length=255, default='')
+    context = models.CharField(max_length=5000, default='')
     date      = models.DateTimeField(blank=True, null=True ,default=timezone.now)
 
 

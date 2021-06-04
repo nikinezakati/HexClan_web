@@ -50,8 +50,9 @@ def get_artistname_by_id(id):
             except:
                 pass   
         if len(artist['photo']) != 0:
-            break    
-
+            break
+    if len(artist['photo']) == 0:
+        artist['photo'] = "http://127.0.0.1:8000/media/Images/defaultartist.jpg"  
     return artist    
 
 
@@ -79,7 +80,8 @@ def get_albumname_by_id(id):
                 return {}
         except:
             album['cover_image'] = ''    
-
+    if len(album['cover_image']) == 0:
+        artist['photo'] = "http://127.0.0.1:8000/media/Images/defaultalbum.jpg"  
     return album     
     
 def get_recordingname_by_id(id):
@@ -105,12 +107,13 @@ def get_recordingname_by_id(id):
                 try:
                     cover = musicbrainzngs.get_image_list(release['id'])
                     if 'images' in cover and 'image' in cover['images'][0]:
-                        artist['photo'] = cover['images'][0]['image']
+                        recording['photo'] = cover['images'][0]['image']
                 except:
                     pass   
             if len(recording['photo']) != 0:
                 break            
-
+        if len(recording['photo']) == 0:
+            recording['photo'] = "http://127.0.0.1:8000/media/Images/defaultmusic.jpg"  
     return recording        
 
 
@@ -157,7 +160,8 @@ def get_artist_by_id(id):
                 pass   
         if len(artist['photo']) != 0:
             break
-
+    if len(artist['photo']) == 0:
+        artist['photo'] = "http://127.0.0.1:8000/media/Images/defaultartist.jpg"
     #followings
     query=total_artist_followings.objects.all().filter(artist_id=id)
     if len(query) !=0:
@@ -193,7 +197,7 @@ def get_album_by_id(id):
             else:
                 return {}
         except:
-            album['cover_image'] = ''
+            album['cover_image'] = "http://127.0.0.1:8000/media/Images/defaultalbum.jpg"
         if 'title' in qu:
             album['title'] = qu['title']
         else:
@@ -309,20 +313,13 @@ def get_recording_by_id(id):
                 temp['date'] = album['date']
             else:
                 return {}
+            try:
+                cover = musicbrainzngs.get_image_list(album['id'])
+                if 'images' in cover and 'image' in cover['images'][0]:
+                    temp['photo'] = cover['images'][0]['image']
+            except:
+                temp['photo'] = "http://127.0.0.1:8000/media/Images/defaultmusic.jpg"     
             recording['album'].append(temp)
-    if 'release-list' in qu:
-        for release in qu['release-list']:
-            temp = {}
-            if len(artist['photo']) == 0:
-                try:
-                    cover = musicbrainzngs.get_image_list(release['id'])
-                    if 'images' in cover and 'image' in cover['images'][0]:
-                        artist['photo'] = cover['images'][0]['image']
-                except:
-                    pass   
-            if len(artist['photo']) != 0:
-                break        
-
     return recording
 
 def browse_artist_music_by_id(id):

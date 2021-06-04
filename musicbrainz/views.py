@@ -64,17 +64,21 @@ def ArtistAPIView(request):
     i = 0
     for x in LIST:
         y = get_album_by_id(x.album_id)
-        result['results'].append(y)
+        result['top_albums'].append(y)
         i += 1
         if i >= int(limit) or i >= len(LIST):
             break
 
     # comments
     LIST = artist_comment.objects.filter(artist_id=artist_id)
-
+    climit = request.GET['commentlimit']
+    cpage = request.GET['commentpage']
+    i = int(climit) * int(cpage)
+    j = int(climit)
     result['comments'] = []
-    i = 0
-    while(i < len(LIST)):
+    while(j > 0):
+        if(i >= len(LIST)):
+            break
         d1 = {}
         d1['username'] = LIST[i].user.username
         d1['avatar'] = LIST[i].user.avatar.url
@@ -82,7 +86,7 @@ def ArtistAPIView(request):
         d1['date'] = LIST[i].date
         result['comments'].append(d1)
         i = i + 1
-
+        j = j - 1
     return Response(result, status=status.HTTP_201_CREATED)
 
 

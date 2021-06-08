@@ -159,7 +159,7 @@ def GenreAPIView(request):
 		i = i + 1
 		j = j - 1
 	return Response(results, status=status.HTTP_201_CREATED)
-
+	
 @api_view(['GET', 'POST'])
 def ArtistCommentAPI(request):
 	user = request.user
@@ -173,64 +173,41 @@ def ArtistCommentAPI(request):
 		text = data
 	return Response(data, status=status.HTTP_201_CREATED)
 
-# @api_view(['GET',])
-# def ArtistAllCommentAPI(request):
-# 	artistid = request.GET['artistid']
-# 	LIST = artist_comment.objects.filter(artist_id=artistid)
-# 	results={}
-# 	results['results']=[]
-# 	i = 0
-# 	while(i < len(LIST)):
-# 		d1={}
-# 		d1['username'] = LIST[i].user.username
-# 		d1['avatar'] = LIST[i].user.avatar.url
-# 		d1['context'] = LIST[i].context
-# 		d1['date'] = LIST[i].date
-# 		results['results'].append(d1)
-# 		i = i + 1
-# 	return Response(results, status=status.HTTP_201_CREATED)
+@api_view(['GET', 'POST'])
+def AlbumCommentAPI(request):
+	us = request.user
+	albumid = request.GET['id']
+	data = request.data
+	if us.id!=None:
 
-# @api_view(['GET', 'POST'])
-# def ArtistMusicsAPIView(request):
-# 	search = request.GET['artistid']
-# 	results = browse_artist_music_by_id(search)
-# 	return Response(results, status=status.HTTP_201_CREATED)
+		if(len(data)>0):
+			text = data["comment"]
+			if len(text) != 0:
+				album_comment.objects.create(album_id=albumid ,user=us, context=text)
+		else:
+			text = data
+	else:
+		data={"msg": "you are not signed in"}			
+	return Response(data, status=status.HTTP_201_CREATED)
 
-# @api_view(['GET', 'POST'])
-# def ArtistAlbumsAPIView(request):
-# 	search = request.GET['artistid']
-# 	results = browse_artist_album_by_id(search)
-# 	return Response(results, status=status.HTTP_201_CREATED)
+@api_view(['GET', 'POST'])
+def MusicCommentAPI(request):
+	us = request.user
+	musicid = request.GET['id']
+	data = request.data
+	if us.id!=None:
 
-# @api_view(['GET', 'POST'])
-# def ArtistTopMusicsAPIView(request):
-# 	search = request.GET['artistid']
-# 	limit = request.GET['limit']
-# 	LIST = total_music_rating.objects.filter(artist_id=search).order_by('rating').reverse()
-# 	results={}
-# 	results['results']=[]
-# 	i=0
-# 	for x in LIST:
-# 		y = get_recording_by_id(x.music_id)
-# 		results['results'].append(y)
-# 		i += 1
-# 		if i >= int(limit) or i >= len(LIST):
-# 			break
-# 	return Response(results, status=status.HTTP_201_CREATED)
+		if(len(data)>0):
+			text = data["comment"]
+			if len(text) != 0:
+				music_comment.objects.create(music_id=musicid ,user=us, context=text)
+		else:
+			text = data
+	else:
+		data={"msg": "you are not signed in"}			
+	return Response(data, status=status.HTTP_201_CREATED)
 
-# @api_view(['GET', 'POST'])
-# def ArtistTopAlbumsAPIView(request):
-# 	search = request.GET['artistid']
-# 	limit = request.GET['limit']
-# 	LIST = total_album_rating.objects.filter(artist_id=search).order_by('rating').reverse()
-# 	results={}
-# 	results['results']=[]
-# 	i=0
-# 	for x in LIST:
-# 		y = get_album_by_id(x.album_id)
-# 		results['results'].append(y)
-# 		i += 1
-# 		if i >= int(limit) or i >= len(LIST):
-# 			break
-# 	return Response(results, status=status.HTTP_201_CREATED)
+
+
+
 

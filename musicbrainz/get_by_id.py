@@ -9,21 +9,47 @@ musicbrainzngs.set_useragent(
     "hex_clan",
 )
 
-# def get_tracklist(artist, album):
-#     result = musicbrainzngs.search_releases(
-#         artist=artist, release=album, limit=1)
-#     id = result["release-list"][0]["id"]
+def get_albumartist_by_id(id):
+    annotations = musicbrainzngs.get_release_group_by_id(id,includes=['artists'])
 
-#     new_result = musicbrainzngs.get_release_by_id(
-#         id, includes=["recordings", "release-groups"])
-#     t = (new_result["release"]["medium-list"][0]["track-list"])
-#     #date = (new_result['release']['release-group']['first-release-date'])
+    qu = annotations['release-group']
 
-#     for x in range(len(t)):
-#         line = (t[x])
-#         # print(line)
+    if 'artist-credit' in qu :
+        for artist in qu['artist-credit']:
+            artist_id=artist['artist']['id']
 
-#         # print(f'{line["number"]}. {line["recording"]["id"]}')
+    return artist_id     
+
+def get_artist_pic(id):
+    annotations = musicbrainzngs.get_artist_by_id(id, includes=['releases'])
+    qu = annotations['artist']
+    pic=''
+    for release in qu['release-list']:
+        temp = {}
+        if len(pic) == 0:
+            try:
+                cover = musicbrainzngs.get_image_list(release['id'])
+                if 'images' in cover and 'image' in cover['images'][0]:
+                    pic = cover['images'][0]['image']
+            except:
+                pass   
+        if len(pic) != 0:
+            break
+    return pic    
+
+def get_musicartist_by_id(id):
+    annotations = musicbrainzngs.get_recording_by_id(id,includes=['artists'])
+    qu = annotations['recording']
+
+    if 'artist-credit' in qu:
+        for artist in qu['artist-credit']:
+            temp = {}
+            if 'artist' in qu['artist-credit'][00]:
+                if 'id' in artist['artist']:
+                    artist_id = artist['artist']['id']
+                    break    
+
+    return artist_id         
 
 def get_artistname_by_id(id):
     annotations = musicbrainzngs.get_artist_by_id(id, includes=['releases'])
@@ -245,12 +271,13 @@ def get_album_by_id(id):
 
 def get_recording_by_id(id):
     annotations = musicbrainzngs.get_recording_by_id(
-        id, includes=['artists', 'artist-rels', 'releases'])
+        id, includes=['artists', 'artist-rels', 'releases','release-group-rels'])
     qu = annotations['recording']
 
     recording = {}
     recording['artist'] = []
     recording['album'] = []
+    recording['photo']=''
 
     if 'id' in qu:
         recording['id'] = qu['id']
@@ -267,8 +294,8 @@ def get_recording_by_id(id):
         for l in query:
             if l.vote_num !=0:
                 recording['rating']=l.rating/l.vote_num
-        else:
-            recording['rating']=None
+            else:
+                recording['rating']=None
     else:
         recording['rating']=None
 
@@ -313,20 +340,22 @@ def get_recording_by_id(id):
     if 'release-list' in qu:
         for release in qu['release-list']:
             temp = {}
-            if len(artist['photo']) == 0:
+            if len(recording['photo']) == 0:
                 try:
                     cover = musicbrainzngs.get_image_list(release['id'])
                     if 'images' in cover and 'image' in cover['images'][0]:
-                        artist['photo'] = cover['images'][0]['image']
+                        recording['photo'] = cover['images'][0]['image']
                 except:
                     pass   
-            if len(artist['photo']) != 0:
+            if len(recording['photo']) != 0:
                 break        
+    if len(recording['photo']) == 0:
+        recording['photo']=get_artist_pic(recording['artist'][0]['id'])
 
     return recording
 
 def browse_artist_music_by_id(id):
-    annotations = musicbrainzngs.browse_recordings(id)
+    annotations = musicbrainzngs.browse_recordings(artist=id)
     result = {}
     result['result']=[]
     for qu in annotations['recording-list']:
@@ -344,11 +373,12 @@ def browse_artist_music_by_id(id):
     return result['result']
 
 def browse_artist_album_by_id(id):
-    annotations = musicbrainzngs.browse_release_groups(id)
+    annotations = musicbrainzngs.browse_release_groups(artist=id, includes=['tags'])
     result = {}
     result['result']=[]
     for qu in annotations['release-group-list']:
         temp={}
+        temp['genre']=[]
         if 'id' in qu:
             temp['id']=qu['id']
         else:
@@ -365,10 +395,50 @@ def browse_artist_album_by_id(id):
             temp['release_date']=qu['first-release-date']
         else:
             temp['release_date']='-'
+        if 'tag-list' in qu:
+            if len(qu['tag-list'])>5:
+                for i in range (0,5):
+                    a='0'+str(i)
+                    if 'name' in qu['tag-list'][int(a)]:
+                        temp['genre'].append(qu['tag-list'][int(a)]['name'])
+            else:
+                for genre in qu['tag-list']:
+                    if 'name' in genre:
+                        temp['genre'].append(genre['name'])
+        try:
+            cover = musicbrainzngs.get_release_group_image_list(qu['id'])
+            if 'images' in cover and 'image' in cover['images'][0]:
+                temp['cover_image'] = cover['images'][0]['image']
+            else:
+                return {}
+        except:
+            temp['cover_image'] = ''
+               
         if len(temp)>0 :
                 result['result'].append(temp)
-   
+    
+    result['result'] = sorted(result['result'], key=lambda k: k['release_date'],reverse=True) 
     return result['result']
+
+def browse_album_tracks_by_id(id):
+    annotations = musicbrainzngs.browse_releases(release_group=id,includes=['recordings'])
+    result = []
+    for qu in annotations['release-list']:
+        for q in qu['medium-list']:
+            for l in q['track-list']:
+                temp={}
+                if 'id' in l['recording']:
+                    temp['id']=l['recording']['id']
+                else:
+                    continue    
+                if 'title' in l['recording']:
+                    temp['title']=l['recording']['title']
+                else:
+                    continue
+                if len(temp)>0 :
+                        result.append(temp)
+    
+    return result  
 
 
 # if __name__ == '__main__':

@@ -3,12 +3,14 @@ from rest_framework import generics
 from .search_by_query import search_artist_by_name
 from rest_framework.decorators import api_view
 from .ArtistSerializer import ArtistSerializer
+from .AlbumSerializer import AlbumSerializer
 from rest_framework import status
 from rest_framework.response import Response
-from User.models import album_favorite, artist_comment, artist_favorite, total_artist_followings
+from User.models import *
 from musicbrainz.genres import get_genres_mb
 from rest_framework.permissions import IsAuthenticated
 from musicbrainz.get_by_id import *
+from .MusicSerializer import MusicSerializer
 
 
 @api_view(['GET'])
@@ -77,7 +79,10 @@ def ArtistAPIView(request):
     while(i < len(LIST)):
         d1 = {}
         d1['username'] = LIST[i].user.username
-        d1['avatar'] = LIST[i].user.avatar.url
+        try:
+            d1['avatar'] = LIST[i].user.avatar.url
+        except:
+            d1['avatar'] = None
         d1['context'] = LIST[i].context
         d1['date'] = LIST[i].date
         result['comments'].append(d1)
@@ -87,7 +92,7 @@ def ArtistAPIView(request):
 
 
 @api_view(['POST'])
-def ArtistFollowAPIView(request):
+def ArtistFollowAPI(request):
     result = {}
     artist_id = request.GET['id']
     us = request.user
@@ -116,7 +121,7 @@ def ArtistFollowAPIView(request):
 
 
 @api_view(['POST'])
-def ArtistUnfollowAPIView(request):
+def ArtistUnfollowAPI(request):
     result = {}
     artist_id = request.GET['id']
     us = request.user
@@ -139,3 +144,199 @@ def ArtistUnfollowAPIView(request):
         result['msg'] = 'Not Following this Artist'
 
     return Response(result, status=status.HTTP_201_CREATED)
+
+
+@api_view(['GET'])
+def AlbumAPIView(request):
+    result = {}
+    album_id = request.GET['id']
+
+    album = AlbumSerializer()
+    general_info = AlbumSerializer.general_info(album, id=album_id)
+    result['general_info'] = general_info
+    result['musics'] = browse_album_tracks_by_id(album_id)
+
+    # comments
+    LIST = album_comment.objects.filter(album_id=album_id)
+
+    result['comments'] = []
+    i = 0
+    while(i < len(LIST)):
+        d1 = {}
+        d1['username'] = LIST[i].user.username
+        try:
+            d1['avatar'] = LIST[i].user.avatar.url
+        except:
+            d1['avatar'] = None
+        d1['context'] = LIST[i].context
+        d1['date'] = LIST[i].date
+        result['comments'].append(d1)
+        i = i + 1
+
+    return Response(result, status=status.HTTP_201_CREATED)
+
+
+@api_view(['POST'])
+def AlbumFavoriteAPI(request):
+    result = {}
+    album_id = request.GET['id']
+    us = request.user
+    if us.id != None:
+
+        query = album_favorite.objects.all().filter(user=us, album_id=album_id)
+        if len(query) == 0:
+            ar = album_favorite.objects.create(album_id=album_id, user=us)
+            result['msg'] = 'Succesful'
+
+        else:
+            result['msg'] = 'Album Already in Favorites'
+    else:
+        result['msg'] = 'User Not Signed in'
+
+    return Response(result, status=status.HTTP_201_CREATED)
+
+@api_view(['POST'])
+def AlbumUnfavoriteAPI(request):
+    result = {}
+    album_id = request.GET['id']
+    us = request.user
+    permission_classes = [IsAuthenticated, ]
+
+    query = album_favorite.objects.all().filter(user=us, album_id=album_id)
+    if len(query) > 0:
+        ar = album_favorite.objects.all().filter(
+           album_id=album_id, user=us).delete()
+        result['msg'] = 'Succesful'
+
+    else:
+        result['msg'] = 'This Album is Not in Your Favorites'
+
+    return Response(result, status=status.HTTP_201_CREATED)    
+
+
+@api_view(['POST'])
+def AlbumRateAPI(request):
+    us = request.user
+    album_id = request.GET['id']
+    data = request.data
+    if us.id != None:
+        if(len(data) > 0):
+            rate = data["rate"]
+            if rate != None:
+                album_rating.objects.create(
+                    album_id=album_id, user=us, rating=float(rate))
+
+            q = total_album_rating.objects.all().filter(album_id=album_id)
+            if len(q) > 0:
+                for l in q:
+                    if l.album_id == album_id:
+                        l.rating = ((l.rating*l.vote_num) +
+                                    float(rate))/(l.vote_num+1)
+                        l.vote_num += 1
+                        l.save()
+            else:
+                artist_id = get_albumartist_by_id(album_id)
+                total_album_rating.objects.create(
+                    album_id=album_id, vote_num=1, rating=float(rate), artist_id=artist_id)
+        else:
+            data = {"msg": "no value for rating assigned"}
+    else:
+        data = {"msg": "you are not signed in"}
+    return Response(data, status=status.HTTP_201_CREATED)
+
+@api_view(['GET'])
+def MusicAPIView(request):
+    result = {}
+    music_id = request.GET['id']
+
+    music = MusicSerializer()
+    general_info = MusicSerializer.general_info(music, id=music_id)
+    result['general_info'] = general_info
+    
+
+    # comments
+    LIST = music_comment.objects.filter(music_id=music_id)
+
+    result['comments'] = []
+    i = 0
+    while(i < len(LIST)):
+        d1 = {}
+        d1['username'] = LIST[i].user.username
+        try:
+            d1['avatar'] = LIST[i].user.avatar.url
+        except:
+            d1['avatar'] = None
+        d1['context'] = LIST[i].context
+        d1['date'] = LIST[i].date
+        result['comments'].append(d1)
+        i = i + 1
+
+    return Response(result, status=status.HTTP_201_CREATED)    
+
+@api_view(['POST'])
+def MusicFavoriteAPI(request):
+    result = {}
+    music_id = request.GET['id']
+    us = request.user
+    if us.id != None:
+
+        query = music_favorite.objects.all().filter(user=us, music_id=music_id)
+        if len(query) == 0:
+            ar = music_favorite.objects.create(music_id=music_id, user=us)
+            result['msg'] = 'Succesful'
+
+        else:
+            result['msg'] = 'Music Already in Favorites'
+    else:
+        result['msg'] = 'User Not Signed in'
+
+    return Response(result, status=status.HTTP_201_CREATED)
+
+@api_view(['POST'])
+def MusicUnfavoriteAPI(request):
+    result = {}
+    music_id = request.GET['id']
+    us = request.user
+    permission_classes = [IsAuthenticated, ]
+
+    query = music_favorite.objects.all().filter(user=us, music_id=music_id)
+    if len(query) > 0:
+        ar = music_favorite.objects.all().filter(
+           music_id=music_id, user=us).delete()
+        result['msg'] = 'Succesful'
+
+
+    else:
+        result['msg'] = 'This Music is Not in Your Favorites'
+
+    return Response(result, status=status.HTTP_201_CREATED)        
+
+@api_view(['POST'])
+def MusicRateAPI(request):
+    us = request.user
+    music_id = request.GET['id']
+    data = request.data
+    if us.id != None:
+        if(len(data) > 0):
+            rate = data["rate"]
+            if rate != None:
+                music_rating.objects.create(
+                    music_id=music_id, user=us, rating=float(rate))
+
+            q = total_music_rating.objects.all().filter(music_id=music_id)
+            if len(q) > 0:
+                for l in q:
+                    if l.music_id == music_id:
+                        l.rating = ((l.rating*l.vote_num) +
+                                    float(rate))/(l.vote_num+1)
+                        l.vote_num += 1
+                        l.save()
+            else:
+                artist_id = get_musicartist_by_id(music_id)
+                total_music_rating.objects.create(
+                    music_id=music_id, vote_num=1, rating=float(rate), artist_id=artist_id)
+        else:
+            data = {"msg": "no value for rating assigned"}
+    else:
+        data = {"msg": "you are not signed in"}
+    return Response(data, status=status.HTTP_201_CREATED)

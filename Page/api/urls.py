@@ -11,10 +11,8 @@ urlpatterns = [
 	url(r'^AlbumSearchAPIView/$', AlbumSearchAPIView, name='AlbumSearchAPIView'),
 	url(r'^SuggestionSearchAPIView/$', SuggestionSearchAPIView, name='SuggestionSearchAPIView'),
 	url(r'^ArtistCommentAPI/$', ArtistCommentAPI, name='ArtistCommentAPI'),
-	#url(r'^ArtistAllCommentAPI/$', ArtistAllCommentAPI, name='ArtistAllCommentAPI'),
+	url(r'^AlbumCommentAPI/$', AlbumCommentAPI, name='AlbumCommentAPI'),
+	url(r'^MusicCommentAPI/$', MusicCommentAPI, name='MusicCommentAPI'),
 	url(r'^GenreAPIView/$', GenreAPIView, name='GenreAPIView'),
-	#url(r'^ArtistMusicsAPIView/$', ArtistMusicsAPIView, name='ArtistMusicsAPIView'),
-	#url(r'^ArtistAlbumsAPIView/$', ArtistAlbumsAPIView, name='ArtistAlbumsAPIView'),
-	#url(r'^ArtistTopMusicsAPIView/$', ArtistTopMusicsAPIView, name='ArtistTopMusicsAPIView'),
-	#url(r'^ArtistTopAlbumsAPIView/$', ArtistTopAlbumsAPIView, name='ArtistTopAlbumsAPIView'),
+	
 ]

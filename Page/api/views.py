@@ -12,6 +12,13 @@ from django.db.models import Q
 from User.models import *
 from musicbrainz.get_by_id import *
 from musicbrainz.models import genre
+from User.models import *
+from itertools import chain
+from django import forms
+from django.http import HttpResponseRedirect, HttpResponse
+from django.shortcuts import redirect, render
+import requests
+import json
 
 @api_view(['GET', 'POST'])
 def ArtistSearchAPIView(request):
@@ -55,11 +62,12 @@ def AlbumSearchAPIView(request):
 @api_view(['GET', 'POST'])
 def TenTopArtistAPIView(request):
 	LIST = total_artist_followings.objects.all().order_by('following_num').reverse()
-	results=[]
+	results={}
+	results['results']=[]
 	i=0
 	for x in LIST:
 		y = get_artist_by_id(x.artist_id)
-		results.append(y)
+		results['results'].append(y)
 		i += 1
 		if i >= 10 or i >= len(LIST):
 			break
@@ -68,11 +76,12 @@ def TenTopArtistAPIView(request):
 @api_view(['GET', 'POST'])
 def TenTopMusicAPIView(request):
 	LIST = total_music_rating.objects.all().order_by('rating').reverse()
-	results=[]
+	results={}
+	results['results']=[]
 	i=0
 	for x in LIST:
 		y = get_recording_by_id(x.music_id)
-		results.append(y)
+		results['results'].append(y)
 		i += 1
 		if i >= 10 or i >= len(LIST):
 			break
@@ -81,11 +90,13 @@ def TenTopMusicAPIView(request):
 @api_view(['GET', 'POST'])
 def TenTopAlbumAPIView(request):
 	LIST = total_album_rating.objects.all().order_by('rating').reverse()
-	results=[]
+	print (len(LIST))
+	results={}
+	results['results']=[]
 	i=0
 	for x in LIST:
 		y = get_album_by_id(x.album_id)
-		results.append(y)
+		results['results'].append(y)
 		i += 1
 		if i >= 10 or i >= len(LIST):
 			break
@@ -172,6 +183,41 @@ def ArtistCommentAPI(request):
 	except:
 		text = data
 	return Response(data, status=status.HTTP_201_CREATED)
+
+@api_view(['GET', 'POST'])
+def LatestUserCommentAPI(request):
+	username = request.GET['username']
+	LIST = user.objects.get(username=username)
+	artistcom = artist_comment.objects.all().filter(user_id=LIST.id).order_by('date')
+	musiccom = music_comment.objects.all().filter(user_id=LIST.id).order_by('date')
+	albumcom = album_comment.objects.all().filter(user_id=LIST.id).order_by('date')
+	all_list = sorted(chain(artistcom, musiccom, albumcom), key=lambda car: car.date, reverse=True)
+	print(len(artistcom))
+	results={}
+	results['results'] = []
+	i = 0
+	for x in all_list:
+		d1 = {}
+		try:
+			d1['artist id'] = x.artist_id
+		except:
+			pass
+		try:
+			d1['music id'] = x.music_id
+		except:
+			pass
+		try:
+			d1['album id'] = x.album_id
+		except:
+			pass
+		d1['comment'] = x.context
+		d1['date'] = x.date
+		results['results'].append(d1)
+		i += 1
+		if(i>=5):
+			break
+	return Response(results, status=status.HTTP_201_CREATED)
+
 
 # @api_view(['GET',])
 # def ArtistAllCommentAPI(request):

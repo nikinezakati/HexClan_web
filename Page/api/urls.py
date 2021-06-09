@@ -17,4 +17,5 @@ urlpatterns = [
 	#url(r'^ArtistAlbumsAPIView/$', ArtistAlbumsAPIView, name='ArtistAlbumsAPIView'),
 	#url(r'^ArtistTopMusicsAPIView/$', ArtistTopMusicsAPIView, name='ArtistTopMusicsAPIView'),
 	#url(r'^ArtistTopAlbumsAPIView/$', ArtistTopAlbumsAPIView, name='ArtistTopAlbumsAPIView'),
+	url(r'^LatestUserCommentAPI/$', LatestUserCommentAPI, name='LatestUserCommentAPI'),
 ]

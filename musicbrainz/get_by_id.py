@@ -227,7 +227,7 @@ def get_album_by_id(id):
         if 'first-release-date' in qu:
             album['release-date'] = qu['first-release-date']
         else:
-            return {}
+            album['release-date']='-'
 
         # artist
         if 'artist-credit' in qu:
@@ -440,9 +440,57 @@ def browse_album_tracks_by_id(id):
     
     return result  
 
+def get_genres_releases(genre):
+    annotations=musicbrainzngs.search_release_groups(tag=genre)
+    result={}
+    result['result']=[]
+    for qu in annotations['release-group-list']:
+        temp={}
+        temp['artist']=[]
+        if 'id' in qu:
+            temp['id']=qu['id']
+        else:
+            continue
+        if 'title' in qu:
+            temp['title']=qu['title']
+        else:
+            continue
+        if 'first-release-date' in qu:
+            temp['release-date'] = qu['first-release-date']
+        else:
+            temp['release-date']='-'
+
+        if 'artist-credit' in qu:
+            for artist in qu['artist-credit']:
+                a = {}
+                if 'id' in artist['artist']:
+                    a['id'] = artist['artist']['id']
+                else:
+                    continue
+                if 'name' in artist['artist']:
+                    a['name'] = artist['artist']['name']
+                else:
+                    continue
+                temp['artist'].append(a)
+        else:
+            continue   
+        try:
+            cover = musicbrainzngs.get_release_group_image_list(temp['id'])
+            if 'images' in cover and 'image' in cover['images'][0]:
+                temp['cover_image'] = cover['images'][0]['image']
+            else:
+                return {}
+        except:
+            temp['cover_image'] = ''
+
+        if len(temp)>0:
+            result['result'].append(temp)   
+
+    return result
 
 # if __name__ == '__main__':
 #     # recording='63e4c621-56a2-4d3f-99d9-25af98d0bede'
-#     print(get_artist_by_id('f4abc0b5-3f7a-4eff-8f78-ac078dbce533'))
+#     print(get_genres_releases('pop'))
+#     #print(get_artist_by_id('f4abc0b5-3f7a-4eff-8f78-ac078dbce533'))
 #     #print(get_album_by_id('a672261f-aa4a-43bd-9d83-2c031b1b77a4'))
 #     #print(musicbrainzngs.get_image_list('61e374b6-1b37-481a-9c81-139317f1e59a'))

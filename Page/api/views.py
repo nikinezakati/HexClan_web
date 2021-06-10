@@ -227,6 +227,39 @@ def MusicCommentAPI(request):
 	return Response(data, status=status.HTTP_201_CREATED)
 
 
+@api_view(['GET', 'POST'])
+def LatestUserCommentAPI(request):
+	username = request.GET['username']
+	LIST = user.objects.get(username=username)
+	artistcom = artist_comment.objects.all().filter(user_id=LIST.id).order_by('date')
+	musiccom = music_comment.objects.all().filter(user_id=LIST.id).order_by('date')
+	albumcom = album_comment.objects.all().filter(user_id=LIST.id).order_by('date')
+	all_list = sorted(chain(artistcom, musiccom, albumcom), key=lambda car: car.date, reverse=True)
+	print(len(artistcom))
+	results={}
+	results['results'] = []
+	i = 0
+	for x in all_list:
+		d1 = {}
+		try:
+			d1['artist id'] = x.artist_id
+		except:
+			pass
+		try:
+			d1['music id'] = x.music_id
+		except:
+			pass
+		try:
+			d1['album id'] = x.album_id
+		except:
+			pass
+		d1['comment'] = x.context
+		d1['date'] = x.date
+		results['results'].append(d1)
+		i += 1
+		if(i>=5):
+			break
+	return Response(results, status=status.HTTP_201_CREATED)
 
 
 

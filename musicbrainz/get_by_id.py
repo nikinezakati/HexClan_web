@@ -76,7 +76,9 @@ def get_artistname_by_id(id):
             except:
                 pass   
         if len(artist['photo']) != 0:
-            break    
+            break  
+    if len(artist['photo']) == 0:
+        artist['photo'] = "http://127.0.0.1:8000/media/Images/defaultartist.jpg"       
 
     return artist    
 
@@ -105,6 +107,8 @@ def get_albumname_by_id(id):
                 return {}
         except:
             album['cover_image'] = ''    
+    if len(album['cover_image']) == 0:
+        artist['photo'] = "http://127.0.0.1:8000/media/Images/defaultalbum.jpg"          
 
     return album     
     
@@ -113,6 +117,7 @@ def get_recordingname_by_id(id):
     qu = annotations['recording']
 
     recording = {}
+    recording['photo']=''
 
     if 'id' in qu:
         recording['id'] = qu['id']
@@ -136,7 +141,8 @@ def get_recordingname_by_id(id):
                     pass   
             if len(recording['photo']) != 0:
                 break            
-
+        if len(recording['photo']) == 0:
+            recording['photo'] = "http://127.0.0.1:8000/media/Images/defaultmusic.jpg"  
     return recording        
 
 
@@ -183,7 +189,8 @@ def get_artist_by_id(id):
                 pass   
         if len(artist['photo']) != 0:
             break
-
+    if len(artist['photo']) == 0:
+        artist['photo'] = "http://127.0.0.1:8000/media/Images/defaultartist.jpg"
     #followings
     query=total_artist_followings.objects.all().filter(artist_id=id)
     if len(query) !=0:
@@ -219,7 +226,7 @@ def get_album_by_id(id):
             else:
                 return {}
         except:
-            album['cover_image'] = ''
+            album['cover_image'] = "http://127.0.0.1:8000/media/Images/defaultalbum.jpg"
         if 'title' in qu:
             album['title'] = qu['title']
         else:
@@ -350,7 +357,7 @@ def get_recording_by_id(id):
             if len(recording['photo']) != 0:
                 break        
     if len(recording['photo']) == 0:
-        recording['photo']=get_artist_pic(recording['artist'][0]['id'])
+        recording['photo']="http://127.0.0.1:8000/media/Images/defaultmusic.jpg" 
 
     return recording
 
@@ -412,7 +419,7 @@ def browse_artist_album_by_id(id):
             else:
                 return {}
         except:
-            temp['cover_image'] = ''
+            temp['cover_image'] = "http://127.0.0.1:8000/media/Images/defaultalbum.jpg"
                
         if len(temp)>0 :
                 result['result'].append(temp)
@@ -463,14 +470,17 @@ def get_genres_releases(genre):
         if 'artist-credit' in qu:
             for artist in qu['artist-credit']:
                 a = {}
-                if 'id' in artist['artist']:
-                    a['id'] = artist['artist']['id']
-                else:
-                    continue
-                if 'name' in artist['artist']:
-                    a['name'] = artist['artist']['name']
-                else:
-                    continue
+                try:
+                    if 'id' in artist['artist']:
+                        a['id'] = artist['artist']['id']
+                    else:
+                        continue
+                    if 'name' in artist['artist']:
+                        a['name'] = artist['artist']['name']
+                    else:
+                        continue
+                except:
+                    continue    
                 temp['artist'].append(a)
         else:
             continue   
@@ -481,12 +491,63 @@ def get_genres_releases(genre):
             else:
                 return {}
         except:
-            temp['cover_image'] = ''
+            temp['cover_image'] = "http://127.0.0.1:8000/media/Images/defaultalbum.jpg"
 
         if len(temp)>0:
             result['result'].append(temp)   
 
     return result
+
+def get_recording_lyrics(id):
+    annotations = musicbrainzngs.get_recording_by_id(
+        id, includes=['artists', 'artist-rels', 'releases'])
+    qu = annotations['recording']
+
+    recording = {}
+    recording['artist'] = []
+    recording['album'] = []
+
+    if 'id' in qu:
+        recording['id'] = qu['id']
+    else:
+        return {}
+    if 'title' in qu:
+        recording['title'] = qu['title']
+    else:
+        return {}
+
+    # rating
+    query= total_music_rating.objects.all().filter(music_id=id)
+    if len(query) !=0:
+        for l in query:
+            if l.vote_num !=0:
+                recording['rating']=l.rating/l.vote_num
+        else:
+            recording['rating']=None
+    else:
+        recording['rating']=None
+
+    # artist
+    if 'artist-credit' in qu:
+        for artist in qu['artist-credit']:
+            temp = {}
+            if 'artist' in artist:
+                if 'id' in artist['artist']:
+                    temp['id'] = artist['artist']['id']
+                else:
+                    return {}
+                if 'type' in artist['artist']:
+                    temp['type'] = artist['artist']['type']
+                else:
+                    return {}
+                if 'name' in artist['artist']:
+                    temp['name'] = artist['artist']['name']
+                else:
+                    return {}
+                recording['artist'].append(temp)
+    else:
+        return {}
+    return recording    
 
 # if __name__ == '__main__':
 #     # recording='63e4c621-56a2-4d3f-99d9-25af98d0bede'

@@ -15,5 +15,6 @@ urlpatterns = [
 	url(r'^MusicCommentAPI/$', MusicCommentAPI, name='MusicCommentAPI'),
 	url(r'^GenreAPIView/$', GenreAPIView, name='GenreAPIView'),
 	url(r'^GenrePageAPIView/$', GenrePageAPIView, name='GenrePageAPIView'),
+	url(r'^LatestUserCommentAPI/$', LatestUserCommentAPI, name='LatestUserCommentAPI'),
 	
 ]

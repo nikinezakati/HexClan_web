@@ -7,8 +7,8 @@ from django.utils import timezone
 class user(AbstractUser):
     description = models.CharField(
         max_length=255, default='', null=True, blank=True)
-    avatar = models.ImageField(upload_to='Images/', height_field=None,
-                               width_field=None, max_length=100, null=True, blank=True)
+    avatar = models.ImageField(upload_to='Images/', height_field=None, default='/Images/default.jpg',
+     width_field=None, max_length=100, null=True, blank=True)
     REQUIRED_FIELDS = ['email', 'first_name', 'last_name', ]
 
     def __str__(self):

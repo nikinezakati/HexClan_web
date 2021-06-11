@@ -265,10 +265,10 @@ def get_album_by_id(id):
             for l in query:
                 if l.vote_num !=0:
                     album['rating']=l.rating/l.vote_num
-            else:
-                album['rating']=None
+                else:
+                    album['rating']=0
         else:
-            album['rating']=None
+            album['rating']=0
 
     else:
         return {}
@@ -344,6 +344,8 @@ def get_recording_by_id(id):
             else:
                 return {}
             recording['album'].append(temp)
+            if len(recording['album']) != 0:
+                break
     if 'release-list' in qu:
         for release in qu['release-list']:
             temp = {}
@@ -375,8 +377,26 @@ def browse_artist_music_by_id(id):
             temp['title']=qu['title']
         else:
             continue
+        if 'first-release-date' in qu:
+            temp['release_date']=qu['first-release-date']
+        else:
+            temp['release_date']='-'
+        try:
+            cover = musicbrainzngs.get_image_list(qu['id'])
+            if 'images' in cover and 'image' in cover['images'][0]:
+                temp['cover_image'] = cover['images'][0]['image']
+            else:
+                return {}
+        except:
+            temp['cover_image'] = "http://127.0.0.1:8000/media/Images/defaultmusic.jpg"
+        w = total_music_rating.objects.all().filter(music_id=qu['id'])
+        if len(w)>0:
+            temp['rating'] = w[0].rating/w[0].vote_num
+        else:
+            temp['rating'] = 0
+        temp['genre'] = "-"
         if len(temp)>0 :
-                result['result'].append(temp)
+            result['result'].append(temp)
     return result['result']
 
 def browse_artist_album_by_id(id):
@@ -385,7 +405,7 @@ def browse_artist_album_by_id(id):
     result['result']=[]
     for qu in annotations['release-group-list']:
         temp={}
-        temp['genre']=[]
+        temp['genre']=""
         if 'id' in qu:
             temp['id']=qu['id']
         else:
@@ -407,11 +427,18 @@ def browse_artist_album_by_id(id):
                 for i in range (0,5):
                     a='0'+str(i)
                     if 'name' in qu['tag-list'][int(a)]:
-                        temp['genre'].append(qu['tag-list'][int(a)]['name'])
+                        temp['genre']+=str(qu['tag-list'][int(a)]['name'])
             else:
-                for genre in qu['tag-list']:
-                    if 'name' in genre:
-                        temp['genre'].append(genre['name'])
+                r = len(qu['tag-list'])
+                if r >0:
+                    temp['genre']=str(qu['tag-list'][0]['name'])
+                    for x in range(1, r):
+                        if 'name' in qu['tag-list'][x]:
+                            temp['genre']+="-"
+                            temp['genre']+=str(qu['tag-list'][x]['name'])
+
+        if len(temp['genre'])==0:
+            temp['genre'] = "-"
         try:
             cover = musicbrainzngs.get_release_group_image_list(qu['id'])
             if 'images' in cover and 'image' in cover['images'][0]:
@@ -420,6 +447,12 @@ def browse_artist_album_by_id(id):
                 return {}
         except:
             temp['cover_image'] = "http://127.0.0.1:8000/media/Images/defaultalbum.jpg"
+
+        w = total_album_rating.objects.all().filter(album_id=qu['id'])
+        if len(w)>0:
+            temp['rating'] = w[0].rating/w[0].vote_num
+        else:
+            temp['rating'] = 0
                
         if len(temp)>0 :
                 result['result'].append(temp)

@@ -29,8 +29,7 @@ def ArtistAPIView(request):
     result = {}
     result['me_follow'] = 'False'
     artist_id = request.GET['id']
-    result['musics'] = browse_artist_music_by_id(artist_id)
-    result['albums'] = browse_artist_album_by_id(artist_id)
+    result['musics_albums'] = browse_artist_music_by_id(artist_id) + browse_artist_album_by_id(artist_id)
     artist = ArtistSerializer()
     general_info = ArtistSerializer.general_info(artist, id=artist_id)
     result['general_info'] = general_info
@@ -49,11 +48,11 @@ def ArtistAPIView(request):
     limit = request.GET['limit']
     LIST = total_music_rating.objects.filter(
         artist_id=artist_id).order_by('rating').reverse()
-    result['top_musics'] = []
+    result['top_musics_albums'] = []
     i = 0
     for x in LIST:
         y = get_recording_by_id(x.music_id)
-        result['top_musics'].append(y)
+        result['top_musics_albums'].append(y)
         i += 1
         if i >= int(limit) or i >= len(LIST):
             break
@@ -62,11 +61,10 @@ def ArtistAPIView(request):
     LIST = total_album_rating.objects.filter(
         artist_id=artist_id).order_by('rating').reverse()
 
-    result['top_albums'] = []
     i = 0
     for x in LIST:
         y = get_album_by_id(x.album_id)
-        result['results'].append(y)
+        result['top_musics_albums'].append(y)
         i += 1
         if i >= int(limit) or i >= len(LIST):
             break

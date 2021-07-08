@@ -187,7 +187,7 @@ def AlbumAPIView(request):
     general_info = AlbumSerializer.general_info(album, id=album_id)
     result['general_info'] = general_info
     result['musics'] = browse_album_tracks_by_id(album_id)
-    return Response(result, status=status.HTTP_201_CREATED)
+    
 
     return Response(result, status=status.HTTP_201_CREATED)
 
@@ -314,7 +314,8 @@ def MusicAPIView(request):
                     result['me_rate'] = 0
         else:
             result['me_rate'] = 0        
-
+    return Response(result, status=status.HTTP_201_CREATED)
+    
 @api_view(['GET'])
 def MusicCommentAPI(request):
     music_id = request.GET['id']

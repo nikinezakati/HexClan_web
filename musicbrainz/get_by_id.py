@@ -264,7 +264,7 @@ def get_album_by_id(id):
         if len(query) !=0:
             for l in query:
                 if l.vote_num !=0:
-                    album['rating']=l.rating/l.vote_num
+                    album['rating']=l.rating
                 else:
                     album['rating']=0
         else:
@@ -300,11 +300,11 @@ def get_recording_by_id(id):
     if len(query) !=0:
         for l in query:
             if l.vote_num !=0:
-                recording['rating']=l.rating/l.vote_num
+                recording['rating']=l.rating
             else:
-                recording['rating']=None
+                recording['rating']=0
     else:
-        recording['rating']=None
+        recording['rating']=0
 
     # artist
     if 'artist-credit' in qu:
@@ -381,14 +381,6 @@ def browse_artist_music_by_id(id):
             temp['release_date']=qu['first-release-date']
         else:
             temp['release_date']='-'
-        try:
-            cover = musicbrainzngs.get_image_list(qu['id'])
-            if 'images' in cover and 'image' in cover['images'][0]:
-                temp['cover_image'] = cover['images'][0]['image']
-            else:
-                return {}
-        except:
-            temp['cover_image'] = "http://127.0.0.1:8000/media/Images/defaultmusic.jpg"
         w = total_music_rating.objects.all().filter(music_id=qu['id'])
         if len(w)>0:
             temp['rating'] = w[0].rating/w[0].vote_num
@@ -439,14 +431,6 @@ def browse_artist_album_by_id(id):
 
         if len(temp['genre'])==0:
             temp['genre'] = "-"
-        try:
-            cover = musicbrainzngs.get_release_group_image_list(qu['id'])
-            if 'images' in cover and 'image' in cover['images'][0]:
-                temp['cover_image'] = cover['images'][0]['image']
-            else:
-                return {}
-        except:
-            temp['cover_image'] = "http://127.0.0.1:8000/media/Images/defaultalbum.jpg"
 
         w = total_album_rating.objects.all().filter(album_id=qu['id'])
         if len(w)>0:

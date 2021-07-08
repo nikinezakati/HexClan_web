@@ -26,7 +26,7 @@ def search_artist_by_name(query, limit, offset, photo):
                 for l in query:
                     re['followings'] = l.following_num
             else:
-                re['followings'] = None
+                re['followings'] = 0
         else:
             continue
         if 'name' in q:
@@ -87,11 +87,11 @@ def search_recording_by_name(query, limit, offset, photo):
             if len(query) != 0:
                 for l in query:
                     if l.vote_num != 0:
-                        re['rating'] = l.rating/l.vote_num
+                        re['rating'] = l.rating
                     else:
-                        re['rating'] = None
+                        re['rating'] = 0
             else:
-                re['rating'] = None
+                re['rating'] = 0
         else:
             continue
         if 'title' in q:
@@ -178,11 +178,11 @@ def search_album_by_name(query, limit, offset, photo):
                 if len(query) != 0:
                     for l in query:
                         if l.vote_num != 0:
-                            re['rating'] = l.rating/l.vote_num
+                            re['rating'] = l.rating
                         else:
-                            re['rating'] = None
+                            re['rating'] = 0
                 else:
-                    re['rating'] = None
+                    re['rating'] = 0
 
                 if photo:
                     try:

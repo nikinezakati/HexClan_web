@@ -18,4 +18,7 @@ urlpatterns = [
     url(r'^MusicFavoriteAPI/$', MusicFavoriteAPI, name='MusicFavoriteAPI'),
     url(r'^MusicUnfavoriteAPI/$', MusicUnfavoriteAPI, name='MusicUnfavoriteAPI'),
     url(r'^MusicRateAPI/$', MusicRateAPI, name='MusicRateAPI'),
+    url(r'^ArtistCommentAPI/$', ArtistCommentAPI, name='ArtistCommentAPI'),
+    url(r'^AlbumCommentAPI/$', AlbumCommentAPI, name='AlbumCommentAPI'),
+    url(r'^MusicCommentAPI/$', MusicCommentAPI, name='MusicCommentAPI'),
 ]    

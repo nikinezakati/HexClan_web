@@ -69,13 +69,18 @@ def ArtistAPIView(request):
         if i >= int(limit) or i >= len(LIST):
             break
 
-    # comments
+    return Response(result, status=status.HTTP_201_CREATED)
+
+@api_view(['GET'])
+def ArtistCommentAPI(request):
+    artist_id = request.GET['id']
     LIST = artist_comment.objects.filter(artist_id=artist_id)
+    result={}
     climit = request.GET['commentlimit']
     cpage = request.GET['commentpage']
     i = int(climit) * int(cpage)
     j = int(climit)
-    result['comments'] = []
+    result['result'] = []
     while(j > 0):
         if(i >= len(LIST)):
             break
@@ -84,12 +89,11 @@ def ArtistAPIView(request):
         d1['avatar'] = LIST[i].user.avatar.url
         d1['context'] = LIST[i].context
         d1['date'] = LIST[i].date
-        result['comments'].append(d1)
+        result['result'].append(d1)
         i = i + 1
         j = j - 1
 
     return Response(result, status=status.HTTP_201_CREATED)
-
 
 @api_view(['POST'])
 def ArtistFollowAPI(request):
@@ -155,23 +159,29 @@ def AlbumAPIView(request):
     general_info = AlbumSerializer.general_info(album, id=album_id)
     result['general_info'] = general_info
     result['musics'] = browse_album_tracks_by_id(album_id)
+    return Response(result, status=status.HTTP_201_CREATED)
 
-    # comments
+@api_view(['GET'])
+def AlbumCommentAPI(request):
+    album_id = request.GET['id']
+    climit = request.GET['commentlimit']
+    cpage = request.GET['commentpage']
     LIST = album_comment.objects.filter(album_id=album_id)
-
-    result['comments'] = []
-    i = 0
-    while(i < len(LIST)):
+    i = int(climit) * int(cpage)
+    j = int(climit)
+    result = {}
+    result['result'] = []
+    while(j > 0):
+        if(i >= len(LIST)):
+            break
         d1 = {}
         d1['username'] = LIST[i].user.username
-        try:
-            d1['avatar'] = LIST[i].user.avatar.url
-        except:
-            d1['avatar'] = None
+        d1['avatar'] = LIST[i].user.avatar.url
         d1['context'] = LIST[i].context
         d1['date'] = LIST[i].date
-        result['comments'].append(d1)
+        result['result'].append(d1)
         i = i + 1
+        j = j - 1
 
     return Response(result, status=status.HTTP_201_CREATED)
 
@@ -253,25 +263,31 @@ def MusicAPIView(request):
     general_info = MusicSerializer.general_info(music, id=music_id)
     result['general_info'] = general_info
     
+    return Response(result, status=status.HTTP_201_CREATED)    
 
-    # comments
+@api_view(['GET'])
+def MusicCommentAPI(request):
+    music_id = request.GET['id']
+    climit = request.GET['commentlimit']
+    cpage = request.GET['commentpage']
     LIST = music_comment.objects.filter(music_id=music_id)
-
-    result['comments'] = []
-    i = 0
-    while(i < len(LIST)):
+    i = int(climit) * int(cpage)
+    j = int(climit)
+    result = {}
+    result['result'] = []
+    while(j > 0):
+        if(i >= len(LIST)):
+            break
         d1 = {}
         d1['username'] = LIST[i].user.username
-        try:
-            d1['avatar'] = LIST[i].user.avatar.url
-        except:
-            d1['avatar'] = None
+        d1['avatar'] = LIST[i].user.avatar.url
         d1['context'] = LIST[i].context
         d1['date'] = LIST[i].date
-        result['comments'].append(d1)
+        result['result'].append(d1)
         i = i + 1
+        j = j - 1
 
-    return Response(result, status=status.HTTP_201_CREATED)    
+    return Response(result, status=status.HTTP_201_CREATED)
 
 @api_view(['POST'])
 def MusicFavoriteAPI(request):

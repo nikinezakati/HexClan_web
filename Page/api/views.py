@@ -63,6 +63,7 @@ def TenTopArtistAPIView(request):
 	i = 0
 	for x in LIST:
 		y = get_artist_by_id(x.artist_id)
+		y['id'] = i + 1
 		results.append(y)
 		i += 1
 		if i >= 10 or i >= len(LIST):
@@ -77,6 +78,7 @@ def TenTopMusicAPIView(request):
 	i = 0
 	for x in LIST:
 		y = get_recording_by_id(x.music_id)
+		y['id'] = i + 1
 		results.append(y)
 		i += 1
 		if i >= 10 or i >= len(LIST):
@@ -91,6 +93,7 @@ def TenTopAlbumAPIView(request):
 	i = 0
 	for x in LIST:
 		y = get_album_by_id(x.album_id)
+		y['id'] = i + 1
 		results.append(y)
 		i += 1
 		if i >= 10 or i >= len(LIST):
@@ -182,7 +185,7 @@ def GenrePageAPIView(request):
 @api_view(['GET', 'POST'])
 def ArtistCommentAPI(request):
 	user = request.user
-	artistid = request.GET['artistid']
+	artistid = request.GET['id']
 	data = request.data
 	try:
 		text = data["comment"]

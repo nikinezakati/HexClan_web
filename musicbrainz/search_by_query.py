@@ -26,7 +26,7 @@ def search_artist_by_name(query, limit, offset, photo):
                 for l in query:
                     re['followings'] = l.following_num
             else:
-                re['followings'] = None
+                re['followings'] = 0
         else:
             continue
         if 'name' in q:
@@ -87,11 +87,11 @@ def search_recording_by_name(query, limit, offset, photo):
             if len(query) != 0:
                 for l in query:
                     if l.vote_num != 0:
-                        re['rating'] = l.rating/l.vote_num
+                        re['rating'] = l.rating
                     else:
-                        re['rating'] = None
+                        re['rating'] = 0
             else:
-                re['rating'] = None
+                re['rating'] = 0
         else:
             continue
         if 'title' in q:
@@ -178,11 +178,11 @@ def search_album_by_name(query, limit, offset, photo):
                 if len(query) != 0:
                     for l in query:
                         if l.vote_num != 0:
-                            re['rating'] = l.rating/l.vote_num
+                            re['rating'] = l.rating
                         else:
-                            re['rating'] = None
+                            re['rating'] = 0
                 else:
-                    re['rating'] = None
+                    re['rating'] = 0
 
                 if photo:
                     try:
@@ -231,8 +231,3 @@ def search_album_by_name(query, limit, offset, photo):
             albums['results'].append(re)
     return albums
 
-# if __name__ == '__main__':
-#     # recording='63e4c621-56a2-4d3f-99d9-25af98d0bede'
-#     print(search_artist_by_name('Billie Eilish',0,0))
-#     #print(get_album_by_id('a672261f-aa4a-43bd-9d83-2c031b1b77a4'))
-#     #print(musicbrainzngs.get_image_list('61e374b6-1b37-481a-9c81-139317f1e59a'))

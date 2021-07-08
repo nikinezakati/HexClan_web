@@ -30,7 +30,11 @@ def ArtistAPIView(request):
     result['me_follow'] = 'False'
     artist_id = request.GET['id']
     result['musics'] = browse_artist_music_by_id(artist_id)
+    if len(result['musics'])==0:
+        return {}
     result['albums'] = browse_artist_album_by_id(artist_id)
+    if len(result['albums'])==0:
+        return {}
     artist = ArtistSerializer()
     general_info = ArtistSerializer.general_info(artist, id=artist_id)
     result['general_info'] = general_info
@@ -71,13 +75,18 @@ def ArtistAPIView(request):
         if i >= int(limit) or i >= len(LIST):
             break
 
-    # comments
+    return Response(result, status=status.HTTP_201_CREATED)
+
+@api_view(['GET'])
+def ArtistCommentAPI(request):
+    artist_id = request.GET['id']
     LIST = artist_comment.objects.filter(artist_id=artist_id)
+    result={}
     climit = request.GET['commentlimit']
     cpage = request.GET['commentpage']
     i = int(climit) * int(cpage)
     j = int(climit)
-    result['comments'] = []
+    result['result'] = []
     while(j > 0):
         if(i >= len(LIST)):
             break
@@ -86,12 +95,11 @@ def ArtistAPIView(request):
         d1['avatar'] = LIST[i].user.avatar.url
         d1['context'] = LIST[i].context
         d1['date'] = LIST[i].date
-        result['comments'].append(d1)
+        result['result'].append(d1)
         i = i + 1
         j = j - 1
 
     return Response(result, status=status.HTTP_201_CREATED)
-
 
 @api_view(['POST'])
 def ArtistFollowAPI(request):
@@ -152,31 +160,60 @@ def ArtistUnfollowAPI(request):
 def AlbumAPIView(request):
     result = {}
     album_id = request.GET['id']
+    result['me_favorite'] = 'False'
+    result['me_rate'] = None
+    us = request.user
+    if us.id != None:
+        query = album_favorite.objects.all().filter(user=us)
+        if len(query) > 0:
+            for q in query:
+                if q.album_id == album_id:
+                    result['me_favorite'] = 'True'
+                else:
+                    result['me_favorite'] = 'False'
+        else:
+            result['me_favorite'] = 'False'
+    if us.id != None:
+        query = album_rating.objects.all().filter(user=us)
+        if len(query) > 0:
+            for q in query:
+                if q.album_id == album_id:
+                    result['me_rate'] = q.rating
+                else:
+                    result['me_rate'] = 0
+        else:
+            result['me_rate'] = 0     
 
     album = AlbumSerializer()
     general_info = AlbumSerializer.general_info(album, id=album_id)
     result['general_info'] = general_info
     result['musics'] = browse_album_tracks_by_id(album_id)
 
-    # comments
-    LIST = album_comment.objects.filter(album_id=album_id)
-
-    result['comments'] = []
-    i = 0
-    while(i < len(LIST)):
-        d1 = {}
-        d1['username'] = LIST[i].user.username
-        try:
-            d1['avatar'] = LIST[i].user.avatar.url
-        except:
-            d1['avatar'] = None
-        d1['context'] = LIST[i].context
-        d1['date'] = LIST[i].date
-        result['comments'].append(d1)
-        i = i + 1
-
     return Response(result, status=status.HTTP_201_CREATED)
 
+@api_view(['GET'])
+def AlbumCommentAPI(request):
+    album_id = request.GET['id']
+    climit = request.GET['commentlimit']
+    cpage = request.GET['commentpage']
+    LIST = album_comment.objects.filter(album_id=album_id)
+    i = int(climit) * int(cpage)
+    j = int(climit)
+    result = {}
+    result['result'] = []
+    while(j > 0):
+        if(i >= len(LIST)):
+            break
+        d1 = {}
+        d1['username'] = LIST[i].user.username
+        d1['avatar'] = LIST[i].user.avatar.url
+        d1['context'] = LIST[i].context
+        d1['date'] = LIST[i].date
+        result['result'].append(d1)
+        i = i + 1
+        j = j - 1
+
+    return Response(result, status=status.HTTP_201_CREATED)
 
 @api_view(['POST'])
 def AlbumFavoriteAPI(request):
@@ -250,11 +287,33 @@ def AlbumRateAPI(request):
 def MusicAPIView(request):
     result = {}
     music_id = request.GET['id']
-
+    result['me_favorite'] = 'False'
+    result['me_rate'] = None
     music = MusicSerializer()
     general_info = MusicSerializer.general_info(music, id=music_id)
     result['general_info'] = general_info
-    
+    us = request.user
+    if us.id != None:
+        query = music_favorite.objects.all().filter(user=us)
+        if len(query) > 0:
+            for q in query:
+                if q.music_id == music_id:
+                    result['me_favorite'] = 'True'
+                else:
+                    result['me_favorite'] = 'False'
+        else:
+            result['me_favorite'] = 'False'
+
+    if us.id != None:
+        query = music_rating.objects.all().filter(user=us)
+        if len(query) > 0:
+            for q in query:
+                if q.music_id == music_id:
+                    result['me_rate'] = q.rating
+                else:
+                    result['me_rate'] = 0
+        else:
+            result['me_rate'] = 0        
 
     # comments
     LIST = music_comment.objects.filter(music_id=music_id)

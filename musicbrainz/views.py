@@ -53,11 +53,11 @@ def ArtistAPIView(request):
     limit = request.GET['limit']
     LIST = total_music_rating.objects.filter(
         artist_id=artist_id).order_by('rating').reverse()
-    result['top_musics'] = []
+    result['top_musics_albums'] = []
     i = 0
     for x in LIST:
         y = get_recording_by_id(x.music_id)
-        result['top_musics'].append(y)
+        result['top_musics_albums'].append(y)
         i += 1
         if i >= int(limit) or i >= len(LIST):
             break
@@ -66,11 +66,10 @@ def ArtistAPIView(request):
     LIST = total_album_rating.objects.filter(
         artist_id=artist_id).order_by('rating').reverse()
 
-    result['top_albums'] = []
     i = 0
     for x in LIST:
         y = get_album_by_id(x.album_id)
-        result['results'].append(y)
+        result['top_musics_albums'].append(y)
         i += 1
         if i >= int(limit) or i >= len(LIST):
             break
@@ -188,6 +187,7 @@ def AlbumAPIView(request):
     general_info = AlbumSerializer.general_info(album, id=album_id)
     result['general_info'] = general_info
     result['musics'] = browse_album_tracks_by_id(album_id)
+    return Response(result, status=status.HTTP_201_CREATED)
 
     return Response(result, status=status.HTTP_201_CREATED)
 
@@ -315,24 +315,29 @@ def MusicAPIView(request):
         else:
             result['me_rate'] = 0        
 
-    # comments
+@api_view(['GET'])
+def MusicCommentAPI(request):
+    music_id = request.GET['id']
+    climit = request.GET['commentlimit']
+    cpage = request.GET['commentpage']
     LIST = music_comment.objects.filter(music_id=music_id)
-
-    result['comments'] = []
-    i = 0
-    while(i < len(LIST)):
+    i = int(climit) * int(cpage)
+    j = int(climit)
+    result = {}
+    result['result'] = []
+    while(j > 0):
+        if(i >= len(LIST)):
+            break
         d1 = {}
         d1['username'] = LIST[i].user.username
-        try:
-            d1['avatar'] = LIST[i].user.avatar.url
-        except:
-            d1['avatar'] = None
+        d1['avatar'] = LIST[i].user.avatar.url
         d1['context'] = LIST[i].context
         d1['date'] = LIST[i].date
-        result['comments'].append(d1)
+        result['result'].append(d1)
         i = i + 1
+        j = j - 1
 
-    return Response(result, status=status.HTTP_201_CREATED)    
+    return Response(result, status=status.HTTP_201_CREATED)
 
 @api_view(['POST'])
 def MusicFavoriteAPI(request):

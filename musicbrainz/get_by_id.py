@@ -360,6 +360,8 @@ def get_recording_by_id(id):
             else:
                 return {}
             recording['album'].append(temp)
+            if len(recording['album']) != 0:
+                break
     if 'release-list' in qu:
         for release in qu['release-list']:
             temp = {}

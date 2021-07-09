@@ -80,7 +80,7 @@ def search_recording_by_name(query, limit, offset, photo):
         re['artist'] = []
         re['album'] = []
 
-        # recording
+        # rating
         if 'id' in q:
             re['id'] = q['id']
             query = total_music_rating.objects.filter(music_id=q['id'])

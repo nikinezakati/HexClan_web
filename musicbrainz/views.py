@@ -262,9 +262,15 @@ def AlbumRateAPI(request):
         if(len(data) > 0):
             rate = data["rate"]
             if rate != None:
-                album_rating.objects.create(
+                query = album_rating.objects.all().filter(user=us, album_id=album_id)
+                if len(query) == 0:
+                    album_rating.objects.create(
                     album_id=album_id, user=us, rating=float(rate))
-
+                if len(query)>0:
+                    for q in query:
+                        if q.user==us:
+                            q.rating=float(rate)
+                            q.save()
             q = total_album_rating.objects.all().filter(album_id=album_id)
             if len(q) > 0:
                 for l in q:
@@ -387,9 +393,15 @@ def MusicRateAPI(request):
         if(len(data) > 0):
             rate = data["rate"]
             if rate != None:
-                music_rating.objects.create(
+                query = music_rating.objects.all().filter(user=us, music_id=music_id)
+                if len(query) == 0:
+                    music_rating.objects.create(
                     music_id=music_id, user=us, rating=float(rate))
-
+                if len(query)>0:
+                    for q in query:
+                        if q.user==us:
+                            q.rating=float(rate)
+                            q.save()
             q = total_music_rating.objects.all().filter(music_id=music_id)
             if len(q) > 0:
                 for l in q:

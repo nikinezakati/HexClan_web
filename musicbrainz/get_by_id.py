@@ -377,6 +377,10 @@ def get_recording_by_id(id):
     if len(recording['photo']) == 0:
         recording['photo']="http://127.0.0.1:8000/media/Images/defaultmusic.jpg" 
 
+   
+    if len(recording['artist'])==0 or len(recording['album'])==0:
+        recording={}
+
     return recording
 
 def browse_artist_music_by_id(id):
@@ -469,6 +473,15 @@ def browse_album_tracks_by_id(id):
                 temp={}
                 if 'id' in l['recording']:
                     temp['id']=l['recording']['id']
+                    query = total_music_rating.objects.filter(music_id=l['recording']['id'])
+                    if len(query) != 0:
+                        for q in query:
+                            if q.vote_num != 0:
+                                temp['rating'] = q.rating
+                            else:
+                                temp['rating'] = 0
+                    else:
+                        temp['rating'] = 0
                 else:
                     continue    
                 if 'title' in l['recording']:

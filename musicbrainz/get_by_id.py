@@ -243,7 +243,7 @@ def get_album_by_id(id):
         if 'first-release-date' in qu:
             album['release-date'] = qu['first-release-date']
         else:
-            album['release-date']='-'
+            album['release-date']='_'
 
         # artist
         if 'artist-credit' in qu:

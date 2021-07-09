@@ -29,11 +29,8 @@ def ArtistAPIView(request):
     result = {}
     result['me_follow'] = 'False'
     artist_id = request.GET['id']
-    result['musics'] = browse_artist_music_by_id(artist_id)
-    if len(result['musics'])==0:
-        return {}
-    result['albums'] = browse_artist_album_by_id(artist_id)
-    if len(result['albums'])==0:
+    result['musics_albums'] = browse_artist_music_by_id(artist_id) + browse_artist_album_by_id(artist_id)
+    if len(result['musics_albums'])==0:
         return {}
     artist = ArtistSerializer()
     general_info = ArtistSerializer.general_info(artist, id=artist_id)

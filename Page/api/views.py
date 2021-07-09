@@ -63,9 +63,10 @@ def TenTopArtistAPIView(request):
 	i = 0
 	for x in LIST:
 		y = get_artist_by_id(x.artist_id)
-		y['id'] = i + 1
-		results.append(y)
-		i += 1
+		if len(y)!=0:
+			y['rank'] = i + 1
+			i += 1
+			results.append(y)
 		if i >= 10 or i >= len(LIST):
 			break
 	return Response(results, status=status.HTTP_201_CREATED)
@@ -78,9 +79,10 @@ def TenTopMusicAPIView(request):
 	i = 0
 	for x in LIST:
 		y = get_recording_by_id(x.music_id)
-		y['id'] = i + 1
-		results.append(y)
-		i += 1
+		if len(y)!=0:
+			y['rank'] = i + 1
+			i += 1
+			results.append(y)
 		if i >= 10 or i >= len(LIST):
 			break
 	return Response(results, status=status.HTTP_201_CREATED)
@@ -93,9 +95,10 @@ def TenTopAlbumAPIView(request):
 	i = 0
 	for x in LIST:
 		y = get_album_by_id(x.album_id)
-		y['id'] = i + 1
-		results.append(y)
-		i += 1
+		if len(y)!=0:
+			y['rank'] = i + 1
+			i += 1
+			results.append(y)
 		if i >= 10 or i >= len(LIST):
 			break
 	return Response(results, status=status.HTTP_201_CREATED)

@@ -205,9 +205,9 @@ def search_album_by_name(query, limit, offset, photo):
                 if q['first-release-date'] != " ":
                     re['first-release-date'] = q['first-release-date']
                 else:
-                    re['first-release-date'] = "-"
+                    re['first-release-date'] = "_"
             else:
-                re['first-release-date'] = "-"
+                re['first-release-date'] = "_"
 
             # artist
             if 'artist-credit' in q:

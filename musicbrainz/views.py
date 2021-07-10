@@ -82,6 +82,7 @@ def ArtistCommentAPI(request):
     cpage = request.GET['commentpage']
     i = int(climit) * int(cpage)
     j = int(climit)
+    result['comments_num'] = len(LIST)
     result['result'] = []
     while(j > 0):
         if(i >= len(LIST)):
@@ -197,6 +198,7 @@ def AlbumCommentAPI(request):
     i = int(climit) * int(cpage)
     j = int(climit)
     result = {}
+    result['comments_num'] = len(LIST)
     result['result'] = []
     while(j > 0):
         if(i >= len(LIST)):
@@ -328,6 +330,7 @@ def MusicCommentAPI(request):
     i = int(climit) * int(cpage)
     j = int(climit)
     result = {}
+    result['comments_num'] = len(LIST)
     result['result'] = []
     while(j > 0):
         if(i >= len(LIST)):

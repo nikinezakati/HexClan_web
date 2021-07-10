@@ -102,6 +102,7 @@ def ProfileInfoAPI(request):
                         temp={}
                         temp['artist']=get_artistname_by_id(id[0])
                         temp['comment']=id[1]
+                        temp['date']=id[2]
                         result['comment_artists'].append(temp)     
 
                 comment_musics = model.get_comment_musics()
@@ -110,6 +111,7 @@ def ProfileInfoAPI(request):
                         temp={}
                         temp['music']=get_recordingname_by_id(id[0])
                         temp['comment']=id[1]
+                        temp['date']=id[2]
                         result['comment_musics'].append(temp)     
 
                 comment_albums = model.get_comment_albums()
@@ -118,6 +120,7 @@ def ProfileInfoAPI(request):
                         temp={}
                         temp['album']=get_albumname_by_id(id[0])
                         temp['comment']=id[1]
+                        temp['date']=id[2]
                         result['comment_albums'].append(temp)                              
 
     return Response(result,status=status.HTTP_201_CREATED)

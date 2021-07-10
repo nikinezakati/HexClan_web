@@ -133,7 +133,7 @@ def search_recording_by_name(query, limit, offset, photo):
                                     if 'images' in cover and 'image' in cover['images'][0]:
                                         temp2['cover_image'] = cover['images'][0]['image']
                                     else:
-                                        temp2['cover_image'] = "http://127.0.0.1:8000/media/Images/defaultmusic.jpg" 
+                                        temp2['cover_image'] = "http://37.152.182.41/media/Images/test_lPQeduj.png" 
                                 except:
                                     continue
                         else:
@@ -151,7 +151,7 @@ def search_recording_by_name(query, limit, offset, photo):
             continue
         if len(re['album']) == 0:
             temp2 = {}
-            temp2['cover_image'] = "http://127.0.0.1:8000/media/Images/defaultmusic.jpg" 
+            temp2['cover_image'] = "http://37.152.182.41/media/Images/test_lPQeduj.png" 
             re['album'].append(temp2)
 
         if len(re) > 1:
@@ -191,7 +191,7 @@ def search_album_by_name(query, limit, offset, photo):
                         if 'images' in cover and 'image' in cover['images'][0]:
                             re['cover_image'] = cover['images'][0]['image']
                         else:
-                            re['cover_image']  = "http://127.0.0.1:8000/media/Images/defaultalbum.jpg" 
+                            re['cover_image']  = "http://37.152.182.41/media/Images/test_lPQeduj.png" 
                     except:
                         continue
             else:

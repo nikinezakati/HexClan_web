@@ -78,7 +78,7 @@ def get_artistname_by_id(id):
         if len(artist['photo']) != 0:
             break  
     if len(artist['photo']) == 0:
-        artist['photo'] = "http://127.0.0.1:8000/media/Images/defaultartist.jpg"       
+        artist['photo'] = "http://37.152.182.41/media/Images/test_lPQeduj.png"       
 
     return artist    
 
@@ -102,13 +102,13 @@ def get_albumname_by_id(id):
         try:
             cover = musicbrainzngs.get_release_group_image_list(id)
             if 'images' in cover and 'image' in cover['images'][0]:
-                album['cover_image'] = cover['images'][0]['image']
+                album['photo'] = cover['images'][0]['image']
             else:
                 return {}
         except:
-            album['cover_image'] = ''    
-    if len(album['cover_image']) == 0:
-        artist['photo'] = "http://127.0.0.1:8000/media/Images/defaultalbum.jpg"          
+            album['photo'] = ''    
+    if len(album['photo']) == 0:
+        album['photo'] = "http://37.152.182.41/media/Images/test_lPQeduj.png"          
 
     return album     
     
@@ -142,7 +142,7 @@ def get_recordingname_by_id(id):
             if len(recording['photo']) != 0:
                 break            
         if len(recording['photo']) == 0:
-            recording['photo'] = "http://127.0.0.1:8000/media/Images/defaultmusic.jpg"  
+            recording['photo'] = "http://37.152.182.41/media/Images/test_lPQeduj.png"  
     return recording        
 
 
@@ -199,7 +199,7 @@ def get_artist_by_id(id):
         if len(artist['photo']) != 0:
             break
     if len(artist['photo']) == 0:
-        artist['photo'] = "http://127.0.0.1:8000/media/Images/defaultartist.jpg"
+        artist['photo'] = "http://37.152.182.41/media/Images/test_lPQeduj.png"
     #followings
     query=total_artist_followings.objects.all().filter(artist_id=id)
     if len(query) !=0:
@@ -235,7 +235,7 @@ def get_album_by_id(id):
             else:
                 return {}
         except:
-            album['cover_image'] = "http://127.0.0.1:8000/media/Images/defaultalbum.jpg"
+            album['cover_image'] = "http://37.152.182.41/media/Images/test_lPQeduj.png"
         if 'title' in qu:
             album['title'] = qu['title']
         else:
@@ -281,8 +281,6 @@ def get_album_by_id(id):
             for l in query:
                 if l.vote_num !=0:
                     album['rating']=l.rating
-            else:
-                album['rating']=0
         else:
             album['rating']=0
 
@@ -375,7 +373,7 @@ def get_recording_by_id(id):
             if len(recording['photo']) != 0:
                 break        
     if len(recording['photo']) == 0:
-        recording['photo']="http://127.0.0.1:8000/media/Images/defaultmusic.jpg" 
+        recording['photo']="http://37.152.182.41/media/Images/test_lPQeduj.png" 
 
    
     if len(recording['artist'])==0 or len(recording['album'])==0:
@@ -408,6 +406,7 @@ def browse_artist_music_by_id(id):
             temp['rating'] = 0
         temp['genre'] = "-"
         if len(temp)>0 :
+            temp['version'] = "music"
             result['result'].append(temp)
     return result['result']
 
@@ -459,7 +458,8 @@ def browse_artist_album_by_id(id):
             temp['rating'] = 0
                
         if len(temp)>0 :
-                result['result'].append(temp)
+            temp['version'] = "album"
+            result['result'].append(temp)
     
     result['result'] = sorted(result['result'], key=lambda k: k['release_date'],reverse=True) 
     return result['result']
@@ -537,7 +537,7 @@ def get_genres_releases(genre):
             else:
                 return {}
         except:
-            temp['cover_image'] = "http://127.0.0.1:8000/media/Images/defaultalbum.jpg"
+            temp['cover_image'] = "http://37.152.182.41/media/Images/test_lPQeduj.png"
 
         if len(temp)>0:
             result['result'].append(temp)   

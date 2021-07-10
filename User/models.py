@@ -7,7 +7,7 @@ from django.utils import timezone
 class user(AbstractUser):
     description = models.CharField(
         max_length=255, default='', null=True, blank=True)
-    avatar = models.ImageField(upload_to='Images/', height_field=None, default='/Images/default.jpg',
+    avatar = models.ImageField(upload_to='Images/', height_field=None, default='/Images/test_gBbX2bC.png',
      width_field=None, max_length=100, null=True, blank=True)
     REQUIRED_FIELDS = ['email', 'first_name', 'last_name', ]
 
@@ -65,7 +65,7 @@ class user(AbstractUser):
         if len(query) != 0:
             for l in query:
                 if l.user == self:
-                    result.append((l.artist_id, l.context))
+                    result.append((l.artist_id, l.context, l.date))
         return result
 
     def get_comment_musics(self):
@@ -74,7 +74,7 @@ class user(AbstractUser):
         if len(query) != 0:
             for l in query:
                 if l.user == self:
-                    result.append((l.music_id, l.context))
+                    result.append((l.music_id, l.context, l.date))
         return result
 
     def get_comment_albums(self):
@@ -83,7 +83,7 @@ class user(AbstractUser):
         if len(query) != 0:
             for l in query:
                 if l.user == self:
-                    result.append((l.album_id, l.context))
+                    result.append((l.album_id, l.context, l.date))
         return result
 
 

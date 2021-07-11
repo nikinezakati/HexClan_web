@@ -91,9 +91,12 @@ def LyricsTextCommentAPI(request):
 		if b == False:
 			l.append(x)
 	results={}
+	i=1
 	results['results']=[]
 	for x in l:
 		d1={}
+		d1['id']=i
+		i+=1
 		d1['username']=x.user.username
 		d1['userimage']=x.user.avatar.url
 		d1['comment']=x.context
